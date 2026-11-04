@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Born to Run: a life simulation game with education, careers, relationships, health and more.">
+  <title>Born to Run — Life-sim</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #16233a; color: #f5f2ea; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; }
+    main { box-sizing: border-box; width: min(100%, 34rem); padding: 2rem; }
+    h1 { color: #f2b134; font-size: clamp(2rem, 8vw, 3.5rem); }
+    p { line-height: 1.6; }
+    a { display: inline-block; padding: 1rem 1.5rem; border-radius: .75rem; background: #f2b134; color: #16233a; font-weight: 700; text-decoration: none; }
+    a:focus-visible { outline: 3px solid #f5f2ea; outline-offset: 4px; }
+  </style>
+  <script>
+    // Keep the original entry file and all of its relative asset paths intact.
+    // A fixed relative target works at both a domain root and /Life-sim/.
+    // replace() also avoids adding a redirect-only page to browser history.
+    const gameURL = new URL('./Life%20sim%20relationships%20.html', window.location.href);
+    gameURL.search = window.location.search;
+    gameURL.hash = window.location.hash;
+    window.location.replace(gameURL.href);
+  </script>
+</head>
+<body>
+  <main>
+    <h1>Born to Run</h1>
+    <p>Opening your life simulation game…</p>
+    <noscript><p>Enable JavaScript to play the game, then use the launch link below.</p></noscript>
+    <a href="./Life%20sim%20relationships%20.html">Launch the game</a>
+  </main>
+</body>
+</html>
