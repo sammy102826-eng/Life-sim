@@ -1,0 +1,37 @@
+/* A shared promotion gate drives both the checklist and the actual review. */
+const uiEscape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function careerPromotionRequirements(j=g.job){
+ if(!j||j.sp)return null;
+ const track=jobUpdatePromotionTrack(j)||LAD[j.f]||[],found=track.findIndex(x=>x[0]===j.t),level=found>=0?found:(j.lv||0),target=track[level+1];if(!target)return null;
+ const c=jobUpdateEnsureCareer(),performance=cl(65+c.switchPenalty*.35-c.score*.08,50,90),years=level>=3?3:2;
+ const rows=[
+  {label:'Performance',have:g.perf,need:performance,met:g.perf>=performance},
+  {label:'Years in current role',have:j.yrs||0,need:years,met:(j.yrs||0)>=years},
+  {label:'Education level',have:EDU[g.edu]||g.edu,need:EDU[target[2]]||target[2],met:g.edu>=target[2]},
+  {label:'Field experience',have:g.exp[j.f]||0,need:target[3]||0,met:(g.exp[j.f]||0)>=(target[3]||0)},
+  {label:'Age',have:g.age,need:target[4]||18,met:g.age>=(target[4]||18)}
+ ];
+ if(target[5])rows.push({label:'Required degree',have:g.deg.includes(target[5])?'Completed':'Missing',need:target[5],met:g.deg.includes(target[5])});
+ if(REQJ[target[0]])rows.push({label:'Professional exam',have:g.pass[REQJ[target[0]]]?'Passed':'Not passed',need:REQJ[target[0]],met:!!g.pass[REQJ[target[0]]]});
+ return {target,level,rows,eligible:rows.every(x=>x.met)&&!g.jail&&!g.ret,chance:cl(g.perf*.7+g.smarts*.2-5+c.score*.1-c.switchPenalty*.6,10,90)};
+}
+function careerChecklistView(){const r=careerPromotionRequirements();return `<div class=card><h3>Next promotion</h3>${r?`<p class=t>${uiEscape(r.target[0])}</p><p class=d>${r.eligible?'Requirements met. Selection remains chance-based.':'Meet the missing conditions before requesting a review.'}</p>${r.rows.map(x=>`<p>${x.met?'✓ Met':'Missing'} · ${uiEscape(x.label)}: ${uiEscape(typeof x.have==='number'?+x.have.toFixed(1):x.have)} / ${uiEscape(typeof x.need==='number'?+x.need.toFixed(1):x.need)}</p>`).join('')}<p class=d>Estimated selection chance ${Math.round(r.chance)}% once eligible. One eligible review attempt per year.</p>`:'<p>No further conventional promotion on this ladder.</p>'}</div>`;}
+promo=function(){const j=g.job,r=careerPromotionRequirements();if(!r)return toast('No further conventional promotion is available.');if(!r.eligible)return toast('Not ready: '+r.rows.filter(x=>!x.met).map(x=>x.label+' needs '+x.need).join(', '));if(j.promotionAttemptAge===g.age)return toast('You already had your promotion review this year.');j.promotionAttemptAge=g.age;
+ if(ch(r.chance)){const c=jobUpdateEnsureCareer();j.lv=r.level+1;j.t=r.target[0];j.pay=Math.round(r.target[1]*(1+Math.min(25,c.score*.25)/100));j.yrs=0;g.fl.promo=1;if(['CEO','Managing partner','Hospital CEO'].includes(j.t))ceoVent(j.t,j.f);A({p:5,perf:3},`You were promoted to ${j.t}.`);}else A({p:-2},'Your promotion review did not lead to an offer. Ask for feedback and try again next year.');};
+const CAREER_ACTION_LIMITS={training:2,schmooze:2,goals:1,timeoff:1,concern:1};
+function careerActionUsage(j){if(!j.annualActions||j.annualActions.age!==g.age)j.annualActions={age:g.age,counts:{}};return j.annualActions.counts;}
+const careerOriginalBoss=jobUpdateBossAction;
+jobUpdateBossAction=function(action,kind,index){const j=jobUpdateCurrentJob(kind,index);if(!j)return;const limit=CAREER_ACTION_LIMITS[action];if(limit){const used=careerActionUsage(j);if((used[action]||0)>=limit)return toast('You have used this workplace activity for the year.');used[action]=(used[action]||0)+1;}return careerOriginalBoss(action,kind,index);};
+const careerOriginalColleague=jobUpdateColleagueAction;
+jobUpdateColleagueAction=function(id,action){const p=g.co.find(x=>x.id===id);if(!p)return;if(action!=='friend'){if(!['chat','lunch','collab','feedback','hangout'].includes(action))return;if(p.activityAge!==g.age){p.activityAge=g.age;p.activityCount=0;}if(p.activityCount>=3)return toast('You have used your three coworker activities with this person this year.');if(action==='lunch'&&g.cash<pr(20)||action==='hangout'&&g.cash<pr(50))return;p.activityCount++;}
+ const before=new Set(g.rel.map(x=>x.id));const result=careerOriginalColleague(id,action);if(action==='friend'){const r=g.rel.find(x=>!before.has(x.id)&&x.source==='coworker');if(r){r.sourceId=p.id;p.friendId=r.id;}}return result;};
+const careerOriginalView=jobUpdateCareerView;
+jobUpdateCareerView=function(kind,index){const html=careerOriginalView(kind,index),j=jobUpdateCurrentJob(kind,index);if(!j)return html;const container=document.createElement('div');container.innerHTML=html;
+ for(const b of container.querySelectorAll('[onclick^="jobUpdateBossAction"]')){const action=b.getAttribute('onclick').match(/\('([^']+)'/)[1],limit=CAREER_ACTION_LIMITS[action];if(limit){const used=careerActionUsage(j)[action]||0;b.disabled=b.disabled||used>=limit;b.insertAdjacentHTML('beforeend',`<small>${used}/${limit} this year</small>`);}if(action==='promotion'&&kind==='ft'){const r=careerPromotionRequirements(j);b.disabled=b.disabled||!r?.eligible||j.promotionAttemptAge===g.age;}}
+ if(jobUpdateCareerPage==='colleagues'&&jobUpdateSelectedColleague){const p=g.co.find(x=>x.id===jobUpdateSelectedColleague),used=p?.activityAge===g.age?p.activityCount:0;for(const b of container.querySelectorAll('[onclick^="jobUpdateColleagueAction"]'))if(!b.getAttribute('onclick').includes("'friend'"))b.disabled=b.disabled||used>=3;container.insertAdjacentHTML('beforeend',`<p class=d>Shared coworker activities ${used||0}/3 this year. Becoming friends does not use an activity.</p>`);}
+ return container.innerHTML+(kind==='ft'&&['home','boss','reviews'].includes(jobUpdateCareerPage)?careerChecklistView():'');};
+function careerStoryOpen(){const j=g.job;if(!j||j.sp||g.event||g.result||g.eduPopup||g.hsPopup)return;j.developmentStory=j.developmentStory||{history:[],path:null};const s=j.developmentStory;if(s.history.some(x=>x.age===g.age))return;const continuing=s.history.length>0;g.event={x:continuing?`A year later at ${j.company}, how will you follow through on your ${s.path} plan?`:`A new chapter at ${j.company}: which development path will you choose?`,c:[['Build transferable skills',{careerStory:'skills',s:2,perf:2},'You completed a practical learning project.'],['Seek a mentor and support others',{careerStory:'mentorship',p:2},'You built a professional support network.'],['Protect a sustainable workload',{careerStory:'balance',h:3,p:3},'You set expectations that support long-term work.']]};draw();}
+const careerStoryEffect=E;
+E=function(x){const result=careerStoryEffect(x);if(x?.careerStory&&g.job){const j=g.job,s=j.developmentStory||(j.developmentStory={history:[],path:null});if(!s.history.some(y=>y.age===g.age)){s.path=x.careerStory;s.history.push({age:g.age,path:s.path,company:j.company});if(s.history.length>20)s.history.shift();if(s.path==='mentorship')jobUpdateCareerRaw().score=cl(jobUpdateCareerRaw().score+3);}}return result;};
+const careerStoryView=jobUpdateCareerView;
+jobUpdateCareerView=function(kind,index){const html=careerStoryView(kind,index),j=jobUpdateCurrentJob(kind,index);return html+(j&&!j.sp&&jobUpdateCareerPage==='reviews'?`<div class=card><h3>Career development story</h3>${(j.developmentStory?.history||[]).map(x=>`<p>Age ${x.age} · ${uiEscape(x.path)}</p>`).join('')}${B('Plan this year’s development','careerStoryOpen()',j.developmentStory?.history.some(x=>x.age===g.age))}</div>`:'');};
