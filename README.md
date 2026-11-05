@@ -71,3 +71,29 @@ Tests use `/usr/bin/chromium` when available, otherwise Playwright's installed C
 The suite starts an ephemeral local server and isolated browser contexts, seeds randomness, and checks charges, pregnancy guards and birth, save migration and backup round-trips, invalid backups, historical saves, annual school progression, mobile scrolling, modal keyboard behavior, and automated contrast/labels/dialog checks in both themes. It does not touch normal user saves. Progression checks deliberately clear event popups and restore health to isolate annual transitions; the diploma check supplies passing final-year marks. Education tests also cover preschool reports, learning decisions, earned diploma and equivalency paths, admissions, actual college bills, failed credits, four-year graduation, internship rewards and mobile education menus.
 
 See [UPDATE_REPORT.md](UPDATE_REPORT.md) for the education additions, cross-tab fixes, test coverage and further recommendations. See BUG_REPORT.md for the bug history and remaining limits. Full manual screen-reader testing, physical-device testing, all game branches, and real billing are outside the completed validation.
+
+## Housing, rentals and real estate
+
+Open **Stuff → Residence, landlord & homes to rent** for the new housing system. Extra properties support scheduled listings, applicant screening, tenant relationships, annual rent, repairs, arrears and lease renewals. Work → **Special career → Real estate** adds licensing, clients, viewings, offers, commissions and firm growth. Catalogs are categorized and paginated; the five main tabs have equal widths; Education journey is the single school entry on the Work overview.
+
+See [REAL_ESTATE_GUIDE.md](REAL_ESTATE_GUIDE.md) for the rules, save compatibility, validation and next recommendations.
+
+## Property enterprise and unified college flow
+
+Regional markets, adjustable asking rents, independent building units, contractors, managers, business statements/taxes/forecasts, household costs and roommates, and real estate office teams are implemented. College scheduling now uses a real draft/confirmation process and one current-semester coursework page. See [PROPERTY_AND_COLLEGE_UPDATE.md](PROPERTY_AND_COLLEGE_UPDATE.md) for controls and accounting rules.
+
+## Royalty
+
+New lives can be born royal in monarchy countries, and adult dating can lead to royal marriage and relocation. Royal houses have crests, protected residences, family titles, succession, allowances, public opinion, duties, scandals, abdication/exile and an irreversible country-specific republican transition. See [ROYALTY_GUIDE.md](ROYALTY_GUIDE.md) for the rules and the 504-scenario event catalog.
+
+## Royal courts and constitutional systems
+
+Royal institutions now include regional courts and territorial charters, country-specific powers and succession rules, diplomatic tours, staff/protection budgets, regents and negotiated family-council decisions. Open **Work → Royal role → Royal institutions**. See [ROYAL_COURTS_GUIDE.md](ROYAL_COURTS_GUIDE.md).
+
+## Fame, newspaper and interactive activities
+
+The bottom fame bar opens a full profile with paid offers, media choices, fans, reception reports and agent representation. The header newspaper opens archived yearly editions with community/player stories and interactive responses. Previously instant activities across major life systems now offer meaningful approaches while preserving their existing rules and detailed decision flows. See [FAME_AND_NEWS_GUIDE.md](FAME_AND_NEWS_GUIDE.md).
+
+## Long-term fame commitments
+
+The Fame profile now includes sponsorship contracts with annual deliverables, renewal and reputation clauses; distinct fan clubs with recurring organizers and persistent friendships; and funded PR staff, targeted campaigns and crisis responses. Open **Fame → Long-term fame**. See [FAME_COMMITMENTS_GUIDE.md](FAME_COMMITMENTS_GUIDE.md) for the rules and costs.
