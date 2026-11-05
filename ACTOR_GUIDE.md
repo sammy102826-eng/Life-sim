@@ -20,4 +20,4 @@ Networks review TV audience response and buzz after each season. Cancellation fr
 
 Franchise offers now include a studio-controlled deal at double the original salary, consultation rights at 1.8 times salary, or script approval at 1.5 times salary. Negotiating rights can fail based on proven performance and agent skill; refusal leaves you uncommitted. Consultation improves production readiness. Script approval replaces character research with one choice to deepen the character or strengthen the audience hook. Signed rights carry across all contracted sequels.
 
-Every gameplay menu has a Back to Life escape, and the actor profile also has Back to Work. Back navigation preserves offers, productions, relationships and saves; decision popups retain their explicit decision/dismiss buttons.
+Submenus have back buttons to their parent section, including Family housing → Stuff and Actor profile → Work. Clicking any main tab opens its landing page, including when that tab is already selected. Navigation preserves offers, productions, relationships and saves; decision popups retain their explicit decision/dismiss buttons.
