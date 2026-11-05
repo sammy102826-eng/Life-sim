@@ -97,3 +97,11 @@ The bottom fame bar opens a full profile with paid offers, media choices, fans, 
 ## Long-term fame commitments
 
 The Fame profile now includes sponsorship contracts with annual deliverables, renewal and reputation clauses; distinct fan clubs with recurring organizers and persistent friendships; and funded PR staff, targeted campaigns and crisis responses. Open **Fame → Long-term fame**. See [FAME_COMMITMENTS_GUIDE.md](FAME_COMMITMENTS_GUIDE.md) for the rules and costs.
+
+## Actor career
+
+Work → Special careers → Actor now includes performance-led role progression, agents, auditions, salary/backend negotiation, production decisions, releases, awards and franchise commitments. Other → Learning → Lessons provides the single acting-training system from age eight. See [ACTOR_GUIDE.md](ACTOR_GUIDE.md).
+
+## Testing tools
+
+Settings → Debug character editor provides validated stat, age, money, skill, relationship and mechanic-testing controls with one-step undo. The main menu also includes Born into royalty · Testing, with a choice of monarchy and guaranteed royal birth. See [DEBUG_GUIDE.md](DEBUG_GUIDE.md).
