@@ -4,6 +4,8 @@ Open Settings → Debug character editor during a custom life. The button is dis
 
 Apply character changes commits the form after validation. Undo last debug edit restores the state before the last successful editor/helper change. Debug changes use the normal saves and autosave settings; save to a separate slot if you want an independent test copy. Values must remain inside the displayed input limits. No arbitrary code or raw save editing is exposed.
 
+Cash is an exact replacement balance, not an amount to add. Fractional money and ordinary fractional stats are supported; discrete fields such as age and education level still require whole numbers. Monetary values use the game's underlying base units; the normal game header converts them to the selected display currency.
+
 Age changes directly reposition the character without earning income, paying bills, advancing school or simulating skipped events. Annual system clocks move to the selected age and signed actor release dates move with the age difference. School records, pregnancy, family ages and other dated history remain intact; use a fresh life for a complete developmental timeline test. Changing an education level tests eligibility and does not fabricate degrees or transcripts.
 
 Helpers immediately apply one undoable edit: set up an actor test career from age eighteen in a commoner life, add a diagnosed condition, change relationship bonds, reset activity counters or clear pending popups. Clearing popups cancels the pending choices rather than resolving or rewarding them. Limit resets cover general activity, lessons, actor, publicity and royal duty counters; detailed coursework and contract records remain intact.
