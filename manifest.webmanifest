@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "Born to Run – Life-sim",
+  "short_name": "Born to Run",
+  "description": "Play a whole life, online or offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#16233a",
+  "theme_color": "#16233a",
+  "icons": [
+    { "src": "art/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "art/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

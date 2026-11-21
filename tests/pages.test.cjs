@@ -2,6 +2,7 @@ const {test,before,after}=require('node:test');
 const assert=require('node:assert/strict');
 const {chromium}=require('playwright');
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
+const {execFileSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
 let server,browser,base;
 const entry='/Life-sim/Life%20sim%20relationships%20.html';
@@ -15,7 +16,8 @@ before(async()=>{
     if(!file.startsWith(root+path.sep))return res.writeHead(403).end();
     fs.readFile(file,(err,data)=>{
       if(err)return res.writeHead(404).end();
-      const type=file.endsWith('.js')?'text/javascript':file.endsWith('.css')?'text/css':file.endsWith('.svg')?'image/svg+xml':'text/html';
+      const types={'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.webmanifest':'application/manifest+json'};
+      const type=types[path.extname(file)]||'text/html';
       res.writeHead(200,{'Content-Type':type});res.end(data);
     });
   });
@@ -80,4 +82,47 @@ test('launcher provides an accessible manual link when JavaScript is disabled',a
   await page.goto(base+'/Life-sim/');
   assert.match(await page.locator('main').innerText(),/Enable JavaScript/);
   assert.equal(await page.getByRole('link',{name:'Launch the game',exact:true}).getAttribute('href'),'./Life%20sim%20relationships%20.html');
+});
+
+
+test('offline asset list and release version match the current game',()=>{
+  execFileSync(process.execPath,['scripts/build-offline.cjs','--check'],{cwd:root});
+});
+
+test('a phone can reopen the installed game offline and continue a saved life',async t=>{
+  const page=await pageFor(t,{viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const context=page.context();
+  await page.goto(base+'/Life-sim/');
+  await page.waitForURL(base+entry);
+  await page.getByText('Ready to play offline.',{exact:true}).waitFor();
+
+  const session=await context.newCDPSession(page);
+  await session.send('Page.enable');
+  const installed=await session.send('Page.getAppManifest');
+  assert.deepEqual(installed.errors,[]);
+  const manifest=JSON.parse(installed.data);
+  assert.equal(manifest.display,'standalone');
+  assert.equal(new URL(manifest.start_url,installed.url).href,base+'/Life-sim/');
+  assert.deepEqual(manifest.icons.map(icon=>icon.sizes),['192x192','512x512']);
+
+  await startLife(page);
+  assert.ok(await page.evaluate(()=>save(0,'life')));
+  await page.close();
+  await context.setOffline(true);
+
+  const reopened=await context.newPage();
+  const errors=[];
+  reopened.on('pageerror',error=>errors.push(error.message));
+  const response=await reopened.goto(base+'/Life-sim/?from=home-screen#resume');
+  assert.equal(response.fromServiceWorker(),true);
+  await reopened.waitForURL(base+entry+'?from=home-screen#resume');
+  await reopened.getByRole('button',{name:'Load game',exact:true}).click();
+  await reopened.getByRole('button',{name:'Load',exact:true}).first().click();
+  assert.match(await reopened.locator('.hd').innerText(),/Pages Test/);
+  await reopened.getByRole('button',{name:'Work',exact:true}).click();
+  await reopened.getByRole('button',{name:'Other',exact:true}).click();
+  assert.ok(await reopened.evaluate(()=>save(0,'life')));
+  await reopened.reload();
+  await reopened.getByRole('button',{name:'Create your own life',exact:true}).waitFor();
+  assert.deepEqual(errors,[]);
 });

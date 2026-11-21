@@ -2,6 +2,16 @@
 
 **Life sim relationships .html** is the game's entry point. The original uploaded game has been updated and split into JavaScript and CSS files in `src/`. Keep that directory beside the HTML file when copying the game.
 
+
+## Play offline on your phone
+
+Open [Born to Run](https://sammy102826-eng.github.io/Life-sim/) while connected to the internet.
+
+- **iPhone** — In Safari, tap **Share → Add to Home Screen**. Turn on **Open as Web App** if you see it, then tap **Add**.
+- **Android** — In Chrome, tap **Install Born to Run**, or open the menu and choose **Install app** or **Add to Home screen**.
+
+Open the new Home Screen icon while you’re still online. Once the title screen says **Ready to play offline**, you can launch and play in airplane mode. On iPhone, the Home Screen app may have its own save storage. If a Safari save is missing, export its JSON from **Load game** in Safari and import it through **Load game** in the installed app.
+
 ## Run
 
 No application build or runtime package installation is required. From `/workspace/Life-sim`:

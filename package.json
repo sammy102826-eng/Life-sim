@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/*.test.cjs",
+    "offline:build": "node scripts/build-offline.cjs",
     "art:build": "node scripts/build-art-gallery.cjs"
   },
   "devDependencies": {

@@ -1,8 +1,8 @@
 # Deploy Life-sim on GitHub Pages
 
-The root `index.html` launches the existing `Life sim relationships .html` through a relative, same-origin redirect. Query parameters and fragments are preserved. The original game HTML, JavaScript, CSS, artwork, features and save system are unchanged.
+The root `index.html` launches the existing `Life sim relationships .html` through a relative, same-origin redirect. Query parameters and fragments are preserved. The launcher and game both link to the same install manifest.
 
-All game scripts and styles already use relative paths. They work under the repository site prefix `/Life-sim/`; no asset rewrites or build step are required. `.nojekyll` tells branch-based GitHub Pages to serve the files as a static site.
+All game scripts and styles already use relative paths. They work under the repository site prefix `/Life-sim/`; GitHub Pages serves the committed files directly. `.nojekyll` tells branch-based GitHub Pages to serve the files as a static site.
 
 ## One-time GitHub setup
 
@@ -22,24 +22,11 @@ The launcher keeps the existing game filename and stays on the same origin. Exis
 
 Saves in Codex/local previews do not automatically move to `sammy102826-eng.github.io`: browser storage is origin-specific. Export your save JSON from the old address and import it through Save / load at the public address. Keep backups before switching addresses, browsers or domains.
 
-## Validation
+## Offline releases
 
-Run:
+After changing game files, run `npm run offline:build` and commit the updated `offline-assets.js` with those changes. The command discovers local scripts, styles, and icons, then fingerprints the files used by the game. The service worker caches the full release before marking it ready. An update takes over once the previous release’s game tabs and Home Screen windows are closed.
 
-```sh
-npm ci
-npm test
-```
-
-The test suite includes a strict `/Life-sim/` server that rejects accidental domain-root asset paths. Deployment checks exercise:
-
-- Root/index redirects with the correct filename, project prefix, query and fragment.
-- Successful loading of all 24 local JavaScript/CSS dependencies.
-- Desktop (1440px), phone (390px) and narrow phone (320px) gameplay/navigation and graphics.
-- Preservation and loading of same-origin save data through the launcher.
-- A manual launch link and explanation when JavaScript is disabled.
-
-**Verified result: 78 tests passed, 0 failed, 0 skipped.** The existing gameplay, health, education, artwork, save and accessibility regressions also run. Chromium viewport checks are not physical-device or cross-browser certification.
+Run `node --test tests/pages.test.cjs` to verify the launcher, manifest, and offline reopening and save loading at the GitHub Pages path. Run `npm test` for the whole-game regression suite.
 
 ## After the first deployment
 
