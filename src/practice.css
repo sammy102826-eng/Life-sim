@@ -1,6 +1,6 @@
 .clinic-heading{display:grid;gap:.45rem;margin:.8rem 0}
 .clinic-heading .b{background:#284c52;color:#f2faf5;border:1px solid #729d91;text-align:left;margin:0;min-height:55px}
-.clinic-heading .b strong{display:block;font-size:clamp(1.2rem,4vw,1.7rem);overflow-wrap:anywhere}
+.clinic-heading .b strong{display:block;font-size:1.25rem;overflow-wrap:anywhere}
 .clinic-heading .b small{display:block;color:#c1e1d8;font-size:.88rem;margin-top:.25rem}
 .clinic-shell .law-section{min-width:0}
 .clinic-shell .law-page>h2{margin-block:1rem .5rem}

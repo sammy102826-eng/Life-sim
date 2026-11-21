@@ -8,32 +8,44 @@ const PRESS_OPTIONS = {
   spotlight:[['Grant an interview',500,4,1],['Thank supporters at a community event',300,2,3],['Decline media requests',0,0,0]],
   property:[['Speak with local residents about the change',250,2,3],['Share a short public statement',100,1,1],['Keep the details private',0,0,0]]
 };
+const newsRunsAfterLead=brief=>!brief||['businessWorld','businessLocal'].includes(brief.type)||brief.type==='civics'&&!brief.ref;
 function newsPublish(kind,title,text,brief,key=null){
   const state=newsState();
   if(key&&(state.editions.some(e=>e.articles.some(a=>a.storyKey===key))||state.queued?.some(e=>e.article.storyKey===key)))return null;
   state.serial=(state.serial||0)+1;
-  const article={id:'brief-'+state.serial,storyKey:key,kind,title,text,action:'brief',brief,player:true,resolved:false};
+  const article={id:'brief-'+state.serial,storyKey:key,kind,title,text,action:brief?'brief':null,brief,player:true,resolved:false};
   const edition=state.editions.find(e=>e.age===g.age);
-  if(edition)edition.articles.unshift(article);
+  if(edition){
+    if(newsRunsAfterLead(brief))edition.articles.push(article);
+    else edition.articles.unshift(article);
+  }
   else (state.queued??=[]).push({age:g.age,article});
   return article.id;
 }
 const pressBuildYear=newsBuildYear;
 newsBuildYear=function(){
   const state=newsState();
-  const outstanding=state.editions.flatMap(e=>e.articles.filter(a=>['practice','lawIncident','studioIncident'].includes(a.brief?.type)&&newsCanRespond(a,e)));
+  const outstanding=state.editions.flatMap(e=>e.articles.filter(a=>['practice','lawIncident','studioIncident','businessUpdate','civics','civicsBill','generationEvent','teacherEvent','musicEvent'].includes(a.brief?.type)&&newsCanRespond(a,e)));
   pressBuildYear();
   for(const article of outstanding){
     if(!state.editions.some(e=>e.articles.some(a=>a.id===article.id)))state.editions[0]?.articles.unshift(article);
   }
   for(const item of state.queued||[]){
     const edition=state.editions.find(e=>e.age===item.age)||state.editions[0];
-    if(edition&&!edition.articles.some(a=>a.id===item.article.id))edition.articles.unshift(item.article);
+    if(edition&&!edition.articles.some(a=>a.id===item.article.id)){
+      if(newsRunsAfterLead(item.article.brief))edition.articles.push(item.article);
+      else edition.articles.unshift(item.article);
+    }
   }
   state.queued=[];
 };
 function newsCanRespond(a,edition){
   if(!a?.action||a.resolved||!edition)return false;
+  if(a.brief?.type==='civics'||a.brief?.type==='civicsBill')return civicNewsAvailable(a,edition);
+  if(a.brief?.type==='musicEvent')return musicEventReady(g.music,musicNewsEvent(a));
+  if(a.brief?.type==='teacherEvent')return teachEventReady(g.teacher,teachNewsEvent(a));
+  if(a.brief?.type==='generationEvent')return !!g.alive&&!g.jail&&genNewsItem(a)?.closed===false;
+  if(a.brief?.type==='businessUpdate')return bizNewsCanRespond(a,edition);
   if(a.brief?.type?.startsWith('studio'))return studioNewsCanRespond(a,edition);
   if(a.brief?.type==='practice'){
     return !!g.practice&&g.practice.status==='active'&&g.practice.incidents.some(x=>x.id===a.brief.ref&&!x.closed);
@@ -46,11 +58,18 @@ function newsOpenBrief(id){
   newsBuildYear();
   const edition=newsState().editions.find(e=>e.articles.some(a=>a.id===id));
   if(!edition)return toast('That edition is no longer available.');
-  newsEditionAge=edition.age;newsSection='all';newsPopupOpen=true;draw(1);
+  newsEditionAge=edition.age;newsSection=newsArticleSection(edition.articles.find(a=>a.id===id));newsPopupOpen=true;draw(1);
 }
 function newsBriefOptions(article){
   const {type,ref}=article.brief;
   if(type==='financeMarket')return finNewsOptions(article);
+  if(type==='civics'||type==='civicsBill')return civicNewsOptions(article);
+  if(type==='musicEvent')return musicNewsOptions(article);
+  if(type==='teacherEvent')return teachNewsOptions(article);
+  if(type==='generationEvent')return genNewsOptions(article);
+  if(type==='businessUpdate')return bizNewsOptions(article);
+  if(type==='businessWorld')return bizInternationalOptions();
+  if(type==='businessLocal')return bizLocalOptions();
   if(type.startsWith('studio'))return studioNewsOptions(article);
   if(type==='practice'){
     const item=g.practice?.incidents.find(x=>x.id===ref);
@@ -65,6 +84,13 @@ function newsBriefOptions(article){
 function newsResolveBrief(article,index){
   const {type,ref}=article.brief;
   if(type==='financeMarket')return finNewsResolve(article,index);
+  if(type==='civics'||type==='civicsBill')return civicNewsResolve(article,index);
+  if(type==='musicEvent')return musicNewsResolve(article,index);
+  if(type==='teacherEvent')return teachNewsResolve(article,index);
+  if(type==='generationEvent')return genNewsResolve(article,index);
+  if(type==='businessUpdate')return bizNewsResolve(article,index);
+  if(type==='businessWorld')return bizInternationalResponse(index);
+  if(type==='businessLocal')return bizLocalResponse(index);
   if(type.startsWith('studio'))return studioNewsResolve(article,index);
   if(type==='practice')return clinicRespond(g.practice,clinicFind(g.practice.incidents,ref),index);
   if(type==='lawIncident'){
@@ -197,13 +223,20 @@ lawFoundOpen=function(){
 };
 function newsValidateBriefs(state){
   if(!Array.isArray(state.editions)||state.editions.some(e=>!Array.isArray(e?.articles)))return;
-  const types=['practice','lawIncident','studioPress','studioIncident','studioAwards','studioClosure','financeMarket',...Object.keys(PRESS_OPTIONS)];
+  const types=['practice','lawIncident','studioPress','studioIncident','studioAwards','studioClosure','financeMarket','businessUpdate','businessWorld','businessLocal','civics','civicsBill','generationEvent','teacherEvent','musicEvent',...Object.keys(PRESS_OPTIONS)];
+  const world=state.worldCycle;
+  if(world!=null&&(!Number.isSafeInteger(world.age)||world.age<18||!Object.hasOwn(BUSINESS_COUNTRIES,world.key)||
+    world.housing!==BUSINESS_COUNTRIES[world.key][3]))throw Error('Invalid world economic cycle.');
   const queued=state.queued??[];
   const serial=state.serial??0;
   if(!Array.isArray(queued)||!Number.isSafeInteger(serial)||serial<0)throw Error('Invalid newspaper brief queue.');
-  const briefs=[...state.editions.flatMap(e=>e.articles.filter(a=>a.brief)),...queued.map(q=>q?.article)];
+  const briefs=[...state.editions.flatMap(e=>e.articles.filter(a=>a.brief||a.storyKey&&a.id.startsWith('brief-'))),...queued.map(q=>q?.article)];
+  const validPayload=a=>a.brief==null?a.action===null:types.includes(a.brief?.type)&&a.action==='brief';
   if(queued.some(q=>!Number.isSafeInteger(q?.age)||q.age<0)||briefs.some(a=>!a||!/^brief-\d+$/.test(a.id)||Number(a.id.slice(6))>serial||
-    !types.includes(a.brief?.type)||a.brief.type==='financeMarket'&&typeof a.brief.ref!=='string'||['practice','studioIncident','studioPress'].includes(a.brief.type)&&!Number.isSafeInteger(a.brief.ref)||a.action!=='brief'||
+    !validPayload(a)||['generationEvent','teacherEvent','musicEvent'].includes(a.brief?.type)&&(!Number.isSafeInteger(a.brief.ref)||a.brief.ref<1)||['civics','civicsBill'].includes(a.brief?.type)&&
+     (!Number.isSafeInteger(a.brief.ref)||a.brief.ref<0||typeof a.brief.international!=='boolean')||
+    a.brief?.type==='civicsBill'&&!['committee','desk','reconsideration','veto'].includes(a.brief.stage)||a.brief?.type==='businessUpdate'&&(typeof a.brief.rumor!=='boolean'||!Number.isSafeInteger(a.brief.decision))||
+    ['financeMarket','businessUpdate','businessWorld','businessLocal'].includes(a.brief?.type)&&typeof a.brief.ref!=='string'||['practice','studioIncident','studioPress'].includes(a.brief?.type)&&!Number.isSafeInteger(a.brief.ref)||
     typeof a.title!=='string'||typeof a.text!=='string'||typeof a.resolved!=='boolean')||
     new Set(briefs.map(a=>a.id)).size!==briefs.length)throw Error('Invalid newspaper brief.');
 }
@@ -255,9 +288,9 @@ marry=function(){
   }
   return result;
 };
-function newsEarlierDecisions(state,edition){
+function newsEarlierDecisions(state,edition,section='all'){
   if(edition.age!==g.age)return '';
-  const older=state.editions.filter(e=>e.age!==edition.age).flatMap(e=>e.articles.filter(a=>newsCanRespond(a,e)).map(a=>[e.age,a]));
+  const older=state.editions.filter(e=>e.age!==edition.age).flatMap(e=>e.articles.filter(a=>newsArticleSection(a)===section&&newsCanRespond(a,e)).map(a=>[e.age,a]));
   return older.length?`<section class="newspaper-pending"><h2>Unresolved decisions from past editions</h2>
     ${older.map(([age,a])=>B(uiEscape(a.title)+' · Age '+age,`newsArticle('${a.id}')`)).join('')}</section>`:'';
 }

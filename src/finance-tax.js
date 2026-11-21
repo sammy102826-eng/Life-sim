@@ -77,7 +77,7 @@ function finPrepareTaxes(s,ledger){
  const ordinary=rows.reduce((n,[,amount])=>n+amount,0);
  const inherited=a.inheritance||0,lotteryGross=a.lotteryGross||0,lotteryTax=a.lotteryTax||0;
  const capital=(a.gains||0);
- const withhold=(f.inc||0)+sum(/^(Acting income taxes|Movie studio withdrawal tax|Medical practice distribution tax|Law firm distribution tax)$/i,true)+lotteryTax;
+ const withhold=(f.inc||0)+sum(/^(Acting income taxes|Movie studio withdrawal tax|Medical practice distribution tax|Law firm distribution tax|Business distribution tax)$/i,true)+lotteryTax;
  const maxMarginal=Math.max(0,Math.min(53,C().t.inc));
  const allowances=pr(p.allow+(g.age<18?2100:g.age>=65?1900:0));
  const charity=sum(/^(Charitable donations|News charitable response)$/i,true)+(a.charity||0);

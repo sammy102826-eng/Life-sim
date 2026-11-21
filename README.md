@@ -151,3 +151,50 @@ Run the focused tests with `node --test tests/finance.test.cjs`.
 ## Testing tools
 
 Settings → Debug character editor provides validated stat, age, money, skill, relationship and mechanic-testing controls with one-step undo. The main menu also includes Born into royalty · Testing, with a choice of monarchy and guaranteed royal birth. See [DEBUG_GUIDE.md](DEBUG_GUIDE.md).
+
+### Run a business
+
+Open **Work → Special careers → Business** to found a company or buy control of an existing one. An owner needs a free work and school schedule. Conventional business careers can lead to a board-appointed CEO role with a salary and no ownership stake.
+
+Use **Financial outlook** to compare your last report with a forecast based on current prices, staffing, facilities, and corporate tax. Company funds pay operating costs, research and company debt. Add personal capital or withdraw a taxed distribution from **Financials**. Company loans also appear in the Financial Center.
+
+Research can unlock patent filings, licenses and product improvements. Pending offers, competition reviews and acquired companies appear in **Manage business empire**. A public listing uses the same company registration as Investments.
+
+The Newspaper has **Personal & home country**, **International**, and **Business** sections. Public decisions can be answered from their articles. Rumors are labeled, and economic developments can affect home listings, taxes and investment prices.
+
+### Run for office
+
+Open **Work → Special careers → Run for Office** to choose an office and party in your country. Build a campaign through fundraising, public appearances, debates and turnout. Results use vote totals, and completed terms improve future campaign support.
+
+The current Work slot opens your government. Local offices focus on their own jurisdiction. Executives can negotiate bills, issue orders subject to court review, and handle budgets. National leaders also manage appointments, trade, resources, diplomacy and defense policy. Legislatures and courts can make decisions during **Age Up**. Country profiles use simplified electoral and constitutional rules.
+
+Domestic political stories appear in **Personal & home country** and foreign developments appear in **International**. Eligible articles let you respond, including voting on measures, taking executive action and answering public inquiries.
+
+
+### Generations, vacations and development
+
+Use **Other → Will** to divide cash after debts, taxes and funeral costs, assign property groups, and choose a preferred child successor. At death the settlement lists beneficiaries and any assets sold to pay obligations. Continuing as a child keeps their own savings, job, household and assets alongside their share of the estate.
+
+**Other → Family life** lists pending decisions and earlier generations. Relationships can grow distant after years without contact. Reconnecting with an estranged relative or former friend takes more than one year.
+
+Book a destination and invite companions in **Other → Vacation**. Choose outings, respond to travel events, and bring home souvenirs in your inventory. The Newspaper’s **Just for Fun** section contains fictional stories with no game effects.
+
+Open **Stuff → Property → Land and islands** to buy a building lot, start a preset or custom home, or manage island developments. At the highest wealth levels, fictional island nations offer development and resource mandates. Residents retain their civil government, public project funds stay separate, and resource trades can pay personal royalties.
+
+
+### Teaching and university leadership
+
+Open **Work → Special careers → Teacher** to review qualifications. A 2.5 high-school GPA, a bachelor’s degree, the existing Teaching certification exam, and a local teaching license unlock school appointments. Choose a subject supported by your college major or minor, or choose Broad education. University appointments require a Master of Education and three completed school-teaching years.
+
+Open the current Work slot to plan lessons, hold office hours, guide students, work with colleagues, and grade a class. Age Up generates an annual report. University faculty can publish academic projects and apply to more selective institutions.
+
+After building a university track record, you can lead an existing campus or establish your own. Enrollment, courses, staffing, tuition, and facilities feed into the same annual university budget. The Newspaper carries both read-only education stories and public decisions that can be answered directly.
+
+
+### Singer and bands
+
+Open **Work → Special careers → Singer and bands** to start solo or audition for vocals or an instrument. Practice in the career menu or under **Other → Learning → Lessons → Voice and instruments**. Switch between solo and band careers once the current band and label deals expire.
+
+Bands vote on recording, release, tours, label deals, and lineup changes. A signed label also reviews recording and release proposals. Earnings are split after the label’s cut and any advance repayment. Released recordings keep generating royalties for their original lineup after a member leaves. Look in the Newspaper for releases, lineup changes, breakups, and reunions.
+
+The game and its menus use the same 390 × 844 px mobile frame on computers and adapt to smaller phone screens.

@@ -4,4 +4,4 @@
 .studio-shell .law-section .b{min-height:44px}
 .law-modal #studio-transfer-range{width:100%;accent-color:#aee4cf;min-height:2rem}
 .law-modal input[type=number]{font-variant-numeric:tabular-nums}
-@media(max-width:480px){.studio-shell .law-header{padding:.8rem}.studio-shell .law-nav button{overflow-wrap:anywhere}}
+.studio-shell .law-header{padding:.8rem}

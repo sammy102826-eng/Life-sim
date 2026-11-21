@@ -15,6 +15,8 @@ const JUSTICE_OFFENSES={
  identity:['Identity fraud','Business',16,2,5,'jury',41,1200,9500,69],
  fraud:['Financial fraud','Business',18,2,8,'jury',40,3200,22000,73],
  embezzle:['Embezzlement','Business',18,2,9,'jury',37,2500,28000,74],
+ insider:['Insider trading','Business',18,1,7,'jury',45,0,0,68],
+ espionage:['Corporate espionage','Business',18,1,6,'jury',43,0,0,66],
  tax:['Tax evasion','Business',18,1,5,'judge',43,1200,14000,73],
  smuggling:['Smuggling','Organized crime',18,3,10,'jury',35,4200,41000,75],
  racket:['Extortion','Organized crime',18,3,11,'jury',32,2300,31000,78],

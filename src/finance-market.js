@@ -45,8 +45,9 @@ function finCompanyQuote(s,v,reason){
   revenue:v.rev,earnings:0,patents:0,linked:true,shares:v.sh||1000000};s.companies.push(c);}
  const was=c.public,previous=c.price,oldShares=c.shares;
  c.name=v.n;c.linked=true;c.revenue=v.rev;
- c.earnings=v.rev-v.emp*pr(65000)-v.prod*pr(120000);
- c.patents=Math.max(c.patents||0,v.patents||0);
+ c.earnings=v.biz?v.biz.reports[0]?.profit||0:v.rev-v.emp*pr(65000)-v.prod*pr(120000);
+ if(v.biz)c.sector=bizIndustry(v).sector;
+ c.patents=v.biz?v.patents||0:Math.max(c.patents||0,v.patents||0);
  c.public=!!v.pub;
  c.shares=v.sh||1000000;
  if(c.public){
@@ -121,14 +122,24 @@ function finMarketYear(s){
  if(g.age<16&&!s.companies.length)return;
  finSyncCompanies(s);
  const changes={};
+ const rivals={};
+ for(const venture of g.vent.filter(x=>x.biz)){
+  const industry=bizIndustry(venture);
+  rivals[industry.sector]=(rivals[industry.sector]||0)+Math.min(11,(venture.patents||0)*1.1+venture.rev/2500000);
+ }
  for(const c of s.companies){
-  if(c.linked){changes[c.id]=c.change||0;continue;}
+  if(c.linked||c.bizStatus){changes[c.id]=c.change||0;continue;}
   const sector=g.eco[c.sector]||50;
-  const earningsGrowth=(sector-50)*.26+finRand(s,-18,24);
+  const earningsGrowth=(sector-50)*.26+finRand(s,-18,24)-(rivals[c.sector]||0);
   const patent=(c.sector==='technology'||c.sector==='energy')&&finRand(s,1,100)<=13;
   c.revenue=Math.max(500000,finInt(c.revenue*(1+earningsGrowth/100)));
   c.earnings=finInt(c.revenue*(.09+earningsGrowth/280));
-  if(patent)c.patents++;
+  if(patent){
+   c.patents++;
+   const prototypes=['Materials process','Control system','Cooling system','Quality monitor'];
+   (c.patentNames??=[]).push(c.name+' '+prototypes[(c.patents-1)%prototypes.length]+' '+c.patents);
+   c.patentNames=c.patentNames.slice(-8);
+  }
   if(!c.public){
    if(c.id==='MCU')continue;
    if(c.earnings>24000000&&finRand(s,1,100)<=24){
@@ -142,6 +153,11 @@ function finMarketYear(s){
   c.price=finRoundPrice(old*(1+move/100));c.change=Math.round((c.price/old-1)*100);
   changes[c.id]=c.change;
   if(patent&&c.change>=12)finHeadline(c.name+' reports a technology patent',c.name+' reported stronger growth and a patent milestone.',c.id,'npc-patent-'+c.id+'-'+c.patents);
+  else if(earningsGrowth>=22&&c.change>=12){
+   const industry=BUSINESS_INDUSTRIES[bizSectorIndustry(c.sector)];
+   c.latestProduct=industry.types[(c.patents+(g.age%2))%industry.types.length][0];
+   finHeadline(c.name+' reports a strong product launch',c.name+' attributed higher sales to its new '+c.latestProduct.toLowerCase()+'.',c.id,'npc-launch-'+c.id+'-'+g.age);
+  }
  }
  for(const row of s.instruments){
   const old=row.price;

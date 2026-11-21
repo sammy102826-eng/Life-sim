@@ -62,7 +62,10 @@ function finAction(action,id){
   if(!finSafe(amount)||amount<1)return finMessage('Enter a positive repayment amount.');
   if(id==='student')return eduExtraLoan(amount);
   if(id==='firm'||id==='clinic')text=finBusinessPay(id,amount);
-  else if(g.loans[index])return payLoan(index,amount);
+  else if(id.startsWith('company-')){
+   const v=g.vent.find(v=>v.marketId===id.slice(8)&&v.biz?.debt);
+   if(v)text=bizExtraPrincipal(v,amount);
+  }else if(g.loans[index])return payLoan(index,amount);
  }
  if(action==='collections'){
   text=finCollections(id);
@@ -126,14 +129,19 @@ function finMarketView(s){
  (Object.values(g.inv).some(x=>x>0)?finSection('Legacy holdings',STK.filter(([key])=>g.inv[key]>0).map(([key,label])=>
   finLabel(label,loc(g.inv[key]))+B('Sell legacy '+label.toLowerCase(),`takeOut('${key}')`)).join('')):'');
 }
+function finCompanyStatus(c){
+ if(c.public)return 'Public · '+finQuote(c.price);
+ return {subsidiary:'Privately held subsidiary',restructure:'Restructured subsidiary',merge:'Merged',merged:'Merged',
+  assets:'Operations divested',nationalized:'State-owned'}[c.bizStatus]||'Private or member-owned';
+}
 function finCompanyView(s){
  finInitMarket(s);
  const chosen=finFind(s.companies,finSelected);
  if(chosen)return B('Back to company directory',"finOpen('companies')")+finSection(chosen.name,
-  `<p>${uiEscape(chosen.sector)} · ${chosen.public?'Public':'Privately held'}.</p>`+finLabel('Revenue',loc(chosen.revenue))+finLabel('Earnings',loc(chosen.earnings))+
+  `<p>${uiEscape(chosen.sector)} · ${finCompanyStatus(chosen)}.</p>`+finLabel('Revenue',loc(chosen.revenue))+finLabel('Earnings',loc(chosen.earnings))+
   finLabel('Patents recorded',chosen.patents||0)+(chosen.public?B('View listed shares',`finMarketKind='${chosen.penny?'penny':'stock'}';finOpen('market','${chosen.id}')`):''));
  return finSection('Corporate directory',s.companies.map(c=>`<article class="law-item"><div><h4>${uiEscape(c.name)}</h4>
-  <p>${uiEscape(c.sector)} · ${c.public?'Public · '+finQuote(c.price):'Private or member-owned'} · Earnings ${loc(c.earnings)}</p></div>
+  <p>${uiEscape(c.sector)} · ${finCompanyStatus(c)} · Earnings ${loc(c.earnings)}</p></div>
   ${B('View company',`finOpen('companies','${c.id}')`)}</article>`).join(''));
 }
 function finLotteryView(s){
@@ -182,14 +190,19 @@ function finLoanView(s){
   .filter(([,o])=>o?.debt>0&&o.status==='active').map(([id,o,label])=>finSection(label,
    finLabel('Issuer',uiEscape(finBankName(o.lender||'NVB')))+finLabel('Principal',loc(o.debt))+
    '<p>Automatic installments and extra payments use business funds.</p>'+payment(id,o.debt))).join('');
+ const companyLoans=g.vent.filter(v=>v.biz?.debt&&!v.ceo).map(v=>{
+  const d=v.biz.debt;
+  return finSection(v.n+' business loan',finLabel('Issuer',uiEscape(finBankName(d.lender)))+finLabel('Principal',loc(d.bal))+
+   '<p>Company funds pay the annual installment and extra principal.</p>'+payment('company-'+v.marketId,d.bal));
+ }).join('');
  return finSection('Borrowing offers',finLabel('Credit score',g.cred)+
   finLabel('Personal borrowing limit',a.eligible?loc(a.limit)+' · '+a.rate+'% APR':'Unavailable')+
   finLabel('Business borrowing limit',b.eligible?loc(b.limit)+' · '+b.rate+'% APR':'Unavailable')+
   finSelect('fin-loan-kind','Purpose',[['personal','Personal'],['business','Business']])+finSelect('fin-loan-term','Annual term',[[3,'3 years'],[5,'5 years'],[8,'8 years'],[10,'10 years']])+
   finInput('fin-loan-amount','Principal to request',1000)+finButton('Apply for loan','loan'))+loans+
   (g.sloan>0?finSection('Student loan',finLabel('Issuer',uiEscape(finBankName('FFB')))+finLabel('Remaining principal',loc(g.sloan))+
-   eduDebtView()+payment('student',g.sloan)):'')+business+
-  (!loans&&!business&&!g.sloan?'<p>No outstanding loans.</p>':'');
+   eduDebtView()+payment('student',g.sloan)):'')+business+companyLoans+
+  (!loans&&!business&&!companyLoans&&!g.sloan?'<p>No outstanding loans.</p>':'');
 }
 function finRetirementView(s){
  const r=s.retirement,limit=pr(finTaxProfile().retirement+(g.age>=50?1000:0));

@@ -2,7 +2,7 @@
 let relationshipOpen = {};
 function relationshipRole(r, names){return !!r&&names.includes(r.role)}
 function relationshipAlive(){return (g.rel||[]).filter(r=>r.alive)}
-function relationshipIsExtended(r){return /^(Grandmother|Grandfather|Grandparent|Cousin|Aunt|Uncle|Niece|Nephew|In-law|Great-Grandmother|Great-Grandfather|Relative)/i.test(r.role||'')}
+function relationshipIsExtended(r){return /^(Grandmother|Grandfather|Grandparent|Cousin|Aunt|Uncle|Niece|Nephew|In-law|Great-Grandmother|Great-Grandfather|Grandchild|Step-parent|Step-sibling|Relative)/i.test(r.role||'')}
 function relationshipCategories(){
  const a=relationshipAlive(), group=(label,fn)=>({label,people:a.filter(fn)});
  const cats=[

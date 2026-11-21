@@ -39,7 +39,12 @@ const SaveStore=(()=>{
    if(d.practice!=null||d.practicePrompt!=null||d.physicianPath!=null||d.job?.practiceOwner)clinicValidate(d);
    if(d.news)newsValidateBriefs(d.news);
    if(d.financial!=null)finValidate(d);
+   if(d.job?.businessId||d.vent?.some(v=>v?.biz!=null))bizValidate(d);
    if(d.justice!=null)justiceValidate(d);
+   if(d.civics!=null)civicValidate(d);
+   if(d.generations!=null)genValidate(d);
+   if(d.teacher!=null||d.job?.teaching)teachValidate(d);
+   if(d.music!=null||d.job?.music)musicValidate(d);
    if(d.studio!=null||d.studioPrompt!=null||d.writingPortfolio!=null||d.job?.studioOwner)studioValidate(d);
    if(d.publicity!=null||d.news!=null||d.engagement!=null)narrativeValidate(d);
    if(d.royalty!=null){const r=d.royalty;if(!object(r)||r.version!==1||!Object.hasOwn(ROYAL_REALMS,r.country)||!object(d.w?.[r.country])||!['active','dissolving','commoner','abdicated','exiled'].includes(r.status)||typeof r.house!=='string'||!/^#[0-9a-fA-F]{6}$/.test(r.color)||!Number.isFinite(r.opinion)||r.opinion<0||r.opinion>100||!Number.isFinite(r.treasury)||r.treasury<0||!Number.isFinite(r.lastAge)||!Array.isArray(r.members)||!Array.isArray(r.rulers)||!Array.isArray(r.queue)||!Array.isArray(r.history)||!Array.isArray(r.decisions)||!Array.isArray(r.seen)||!object(r.used))throw Error('Invalid royal household.');const ids=new Set();for(const m of r.members){if(!object(m)||typeof m.id!=='string'||! /^[\w-]+$/.test(m.id)||ids.has(m.id)||typeof m.n!=='string'||!['male','female'].includes(m.sex)||!Object.hasOwn(ROYAL_ALLOWANCES,m.rank)||typeof m.alive!=='boolean'||typeof m.eligible!=='boolean'||!Number.isFinite(m.age)||!Number.isFinite(m.order))throw Error('Invalid royal family member.');ids.add(m.id);}if(!ids.has(r.playerId)||!ids.has(r.founderId)||r.rulers.some(id=>!ids.has(id))||r.members.some(m=>m.parentId!=null&&!ids.has(m.parentId)))throw Error('Invalid royal succession.');if(r.status==='dissolving'&&(!object(r.dissolution)||!d.w[r.country].monarchyDisbanded))throw Error('Incomplete royal transition.');if(r.queue.some(q=>!object(q)||typeof q.text!=='string'||typeof q.kind!=='string'))throw Error('Invalid royal notice.');if(r.dissolution!=null&&(!object(r.dissolution)||!['family','estate','funds','complete'].includes(r.dissolution.stage)))throw Error('Invalid royal transition.');}

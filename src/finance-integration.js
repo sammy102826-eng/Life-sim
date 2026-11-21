@@ -138,7 +138,7 @@ function finNewsResolve(a,choice){
 function finWatchYear(s){
  for(const id of Object.keys(s.watch||{})){
   const c=finFind(s.companies,id);
-  if(c)s.notices.push({title:c.name+' annual report',text:c.public?'Quote '+finQuote(c.price)+' · Annual change '+c.change+'%.':'The company is privately held this year.'});
+  if(c)s.notices.push({title:c.name+' annual report',text:c.public?'Quote '+finQuote(c.price)+' · Annual change '+c.change+'%.':'Company status · '+finCompanyStatus(c)+'.'});
  }
 }
 
@@ -182,6 +182,8 @@ function finValidate(life){
  if(s.returns.some(x=>!object(x)||!count(x.age)||typeof x.country!=='string'||!Array.isArray(x.rows)||
    !Array.isArray(x.brackets)||x.brackets.some(b=>!Array.isArray(b)||!b.every(num))||!Array.isArray(x.deductions)||
    x.deductions.some(d=>!object(d)||typeof d.label!=='string'||typeof d.id!=='string'||!count(d.value))||!num(x.withheld)||!num(x.ordinary)||x.filing!=null&&(!object(x.filing)||!Array.isArray(x.filing.selected)||!num(x.filing.difference))))throw Error('Invalid tax return.');
+ if(s.corporateDeal!=null&&(!object(s.corporateDeal)||typeof s.corporateDeal.approved!=='boolean'||
+  !s.companies.some(c=>c.id===s.corporateDeal.buyer)||!s.companies.some(c=>c.id===s.corporateDeal.target)))throw Error('Invalid corporate transaction.');
  if(s.event!=null&&(!object(s.event)||!finHas(FINANCE_EVENTS,s.event.key)))throw Error('Invalid financial event.');
  if(s.collection!=null&&(!object(s.collection)||!count(s.collection.age)))throw Error('Invalid collection record.');
  if(s.modal!=null&&(!object(s.modal)||!['tax','notice','event','collection'].includes(s.modal.kind)))throw Error('Invalid financial dialog.');
