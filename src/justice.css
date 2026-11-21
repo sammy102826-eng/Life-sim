@@ -1,0 +1,7 @@
+.justice-category summary{font-size:1.03rem;margin-bottom:.35rem}
+.justice-shell .law-header{background:#283c50;border-color:#677d8b}
+.justice-shell .b{min-height:44px}
+.justice-balance{display:block;color:var(--dim);font-size:.8rem;text-align:right}
+.game .nav button:disabled,.game .hd button:disabled,.game .bot [aria-disabled=true],.game .bot button:disabled:not(.up){opacity:.4;cursor:default}
+#justice-bribe{display:block;min-height:32px;width:100%;accent-color:#aee4cf}
+#justice-bribe-value{display:block;font-weight:700}

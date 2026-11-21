@@ -3,7 +3,7 @@ function stc(i){const[l,fx,fl]=STC[i];for(const k in fx)h.m[k]=cl(h.m[k]+fx[k]);
 const L=t=>g.log.unshift(`Age ${g.age}: ${t}`);
 function E0(x){g.health=cl(g.health+(x.h||0));g.happy=cl(g.happy+(x.p||0));g.smarts=cl(g.smarts+(x.s||0));g.looks=cl(g.looks+(x.l||0));g.cash+=x.m||0;g.approval=cl(g.approval+(x.ap||0));g.rec+=x.rec||0;g.jail+=x.j||0;if(x.f)fam().forEach(r=>r.bond=cl(r.bond+x.f));
 for(const k of 'ESAV')g.nat[k]=cl(g.nat[k]+(x[k]||0));if(x.b&&partner())partner().bond=cl(partner().bond+x.b);if(x.d&&!g.cond.includes(x.d))g.cond.push(x.d)}
-const arrest=(w,a,b)=>({x:`You were arrested for ${w}.`,c:[['Hire a lawyer ($5,000)',{m:-5000,rec:1},'Charges mostly dropped.'],['Public defender',{rec:1,j:R(a,b)},'You were sentenced.']]});
+const arrest=(label,minimum,maximum)=>({x:'Police referred an incident for review.',justiceArrest:{label,minimum,maximum},c:[['Review charges',{},'']]});
 const newLife=rich=>({name:nm0=P(NAMES),age:0,health:R(60,95),happy:R(50,90),smarts:R(30,90),looks:R(30,90),cash:rich?50000:0,job:null,edu:0,study:null,rel:mkFam(),exp:{},pt:[],ssc:0,tadj:{},wars:[],ia:-1,eo:-1,diet:'Normal',habits:{smoke:0,drink:0},gym:0,fam:0,rec:0,jail:0,cond:[],party:null,office:-1,term:0,top:-1,approval:50,nat:{E:50,S:50,A:50,V:50},polDone:-1,alive:true,cause:'',event:null,log:['You were born. Press Age Up to begin.']});
 const odds=(i)=>cl(g.smarts*.3+g.looks*.2+g.approval*.3+g.pop*.15+15-i*10-g.rec*20,5,90);
 const cp=()=>PRES.find(p=>p.id==h.id);
@@ -494,7 +494,7 @@ function collect(){const c=[];if(g.car||g.xc.length)c.push(['Hand over a car',{d
 function debtCheck(){if(g.cash<0&&(g.ins.health||g.ins.car||g.ins.home)){if(g.ins.car&&!(typeof stuffAllCars==='function'&&stuffAllCars().length))g.ins.car=0;if(g.ins.home&&!(typeof stuffAllHomes==='function'&&stuffAllHomes().some(h=>h.own)))g.ins.home=0;L('Your budget is in the red. Required car and home coverage remains active while you own those assets; review your Money → Insurance expenses.')}if(g.cash<0){const sv=g.bank.chk+g.bank.sav;if(sv>0){const t=Math.min(-g.cash,sv),c1=Math.min(t,g.bank.chk);g.bank.chk-=c1;g.bank.sav-=t-c1;g.cash+=t}}
  if(g.cash<0&&g.cc){const t=Math.min(-g.cash,pr(CARDS[g.cc.i][1])-g.cc.bal);if(t>0){g.cc.bal+=t;g.cc.spent+=t;g.cash+=t;LD('Expenses charged to your card',-t)}}
  if(g.cash<-pr(3000)&&!g.event){g.dbt++;g.cred=Math.max(300,g.cred-40);collect()}}
-function buildSum(){debtCheck();const f=g.jail?{}:(g.fin||{}),R2=[],add=(k,v)=>{if(v)R2.push([k,Math.round(v)])};
+function buildSum(){if(typeof finYear==='function'){finCreditFinalize();finYear();}debtCheck();const f=g.jail?{}:(g.fin||{}),R2=[],add=(k,v)=>{if(v)R2.push([k,Math.round(v)])};
  add('Salary before tax',f.gr);add('Income tax',-f.inc);add('Social security',-f.ss);add('Healthcare tax',-f.hc);add('Living costs',-f.lv);add('Unemployment benefits',f.wf);add('Government pension',f.gv);add('Private pension',f.pv);add('Student loan payments',-f.rp);for(const k in g.led)add(k,g.led[k]);
  if(ST.sum&&R2.length&&g.age>=14)g.ysum={rows:R2,net:R2.reduce((a,x)=>a+x[1],0)}}
 function pro(){g.study=null;g.ride=false;const hi=g.ath&&g.ath.r>=85;g.job={t:'Pro athlete',pay:hi?400000:60000,f:'sport',sp:1};g.sk=g.ath?g.ath.r:50;g.fame=20;g.rk=0;g.lg=hi?'Premier League':'Development League';L(`You signed with a ${g.lg} team.`)}
@@ -517,9 +517,8 @@ function stuff(){
  if(g.lawyer){g.cash-=2000;LD('Tax attorney',-2000)}
  const tx=C().t.inc*.006;let ig=0;for(const[k,n,[lo,hi]]of STK){const v=g.inv[k];if(v>0){const nv=Math.round(v*(1+R(lo,hi)/100)),gn=nv-v;g.inv[k]=nv;if(gn>0)g.cash-=Math.round(gn*tx);ig+=gn}}if(ig)LD('Investment gains',ig);
  g.angels=g.angels.filter(a=>{if(ch(5)){const m=P([5,8,12,20]);g.cash+=a.a*m;LD('Angel investment exit',a.a*m);L(`An angel investment exited at ${m}x!`);return false}if(ch(20)){L('An angel investment failed.');return false}return true});
- BANKS.forEach((x,i)=>g.rates[i]=cl(rt(i)+R(-3,3)/10,.1,6));if(g.bank.id!=null){const i=Math.round(g.bank.sav*rt(g.bank.id)/100);g.bank.sav+=i;LD('Savings interest',i)}
- if(g.cc){const c=g.cc,i=Math.round(c.bal*CARDS[c.i][2]/100);c.bal+=i;LD('Credit card interest',-i);const mn=Math.round(c.bal*.05);if(g.cash>=mn){g.cash-=mn;c.bal-=mn}else g.missed=1;const rw=Math.round(c.spent*cl((g.cred-600)/150*1.5+.5,.5,2)/100);if(rw){g.cash+=rw;LD('Credit card rewards',rw)}c.spent=0}
- if(g.cash<0)g.missed=1;{const u=g.cc?g.cc.bal/pr(CARDS[g.cc.i][1]):0;g.cred=cl(g.cred+(g.missed?-45:6)-(u>.3?Math.round((u-.3)*20):0),300,850);g.missed=0}
+ BANKS.forEach((x,i)=>g.rates[i]=cl(x[1]+R(-3,3)/10,.1,6));if(g.bank.id!=null){const i=Math.round(g.bank.sav*rt(g.bank.id)/100);g.bank.sav+=i;LD('Savings interest',i)}
+
  g.vent=g.vent.filter(v=>VT[v.t].year(v)!==false);
  if(g.fnd)E({S:1,pop:1});
  for(const k in g.les)if(g.lt[k]!=g.age)g.les[k]=Math.max(0,g.les[k]-1);
@@ -570,8 +569,8 @@ function loanNew(a){if(g.age<18)return;g.loans.push({n:'Personal loan',bal:a,rat
 function payLoan(i,a){const l=g.loans[i];a=Math.min(a,l.bal,Math.max(0,g.cash));if(a<=0)return;l.bal-=a;if(l.bal<=0)g.loans.splice(i,1);A({m:-a},`You paid ${fmt(a)} toward a loan.`)}
 function paySL(a){a=Math.min(a,g.sloan,Math.max(0,g.cash));if(a<=0)return;g.sloan-=a;A({m:-a},`You paid ${fmt(a)} toward student loans.`)}
 function insT(k){const hasCar=typeof stuffAllCars==='function'&&stuffAllCars().length>0,hasHome=typeof stuffAllHomes==='function'&&stuffAllHomes().some(h=>h.own);if(k==='car'&&!hasCar)return toast('Car insurance is only required/available when you own a car.');if(k==='home'&&!hasHome)return toast('Home insurance is only required/available when you own a home.');if((k==='car'&&hasCar)||(k==='home'&&hasHome)){g.ins[k]=1;return toast(`${k==='car'?'Car':'Home'} insurance is required while you own this asset and cannot be cancelled.`)}g.ins[k]=g.ins[k]?0:1;toast(`${k[0].toUpperCase()+k.slice(1)} insurance ${g.ins[k]?'purchased':'cancelled'}.`)}
-function give(a){if(g.cash<a)return;A({m:-a,p:Math.min(8,Math.round(a/pr(5000))+2),S:a>=pr(100000)?1:0,pop:a>=pr(50000)?2:0},`You donated ${fmt(a)} to charity.`)}
-function fundr(){const c=pr(20000);if(g.cash<c)return;A({m:-c,pop:4,p:3,S:2,ap:1},'Your fundraiser was a big success.')}
+function give(a){if(g.cash<a)return;LD('Charitable donations',-a);A({m:-a,p:Math.min(8,Math.round(a/pr(5000))+2),S:a>=pr(100000)?1:0,pop:a>=pr(50000)?2:0},`You donated ${fmt(a)} to charity.`)}
+function fundr(){const c=pr(20000);if(g.cash<c)return;LD('Charitable donations',-c);A({m:-c,pop:4,p:3,S:2,ap:1},'Your fundraiser was a big success.')}
 function foundn(){const c=pr(1e6);if(g.cash<c||g.fnd)return;g.fnd=1;A({m:-c,pop:5,p:5},'You established a charitable foundation.')}
 function moneyV(){const f=g.fin||{};let c='';
  if(msub=='Overview')c=`<div class=t style="margin:10px 0">Economy</div>`+Object.keys(g.eco).map(k=>Bar(k[0].toUpperCase()+k.slice(1),g.eco[k],g.eco[k]>50?'#4FB39A':'#E08E79')).join('')+`<p class=d>Living costs are at ${Math.round(ci()*100)}% of normal and jobs pay more or less depending on their sector. Currency: ${cxo()[0].trim()}. Money controls show the selected display currency. Tuition: ${freeT()?'free':'paid'}. Healthcare: ${freeH()?'free':'private'}.</p>`;

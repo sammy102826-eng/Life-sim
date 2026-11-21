@@ -1,0 +1,13 @@
+.clinic-heading{display:grid;gap:.45rem;margin:.8rem 0}
+.clinic-heading .b{background:#284c52;color:#f2faf5;border:1px solid #729d91;text-align:left;margin:0;min-height:55px}
+.clinic-heading .b strong{display:block;font-size:clamp(1.2rem,4vw,1.7rem);overflow-wrap:anywhere}
+.clinic-heading .b small{display:block;color:#c1e1d8;font-size:.88rem;margin-top:.25rem}
+.clinic-shell .law-section{min-width:0}
+.clinic-shell .law-page>h2{margin-block:1rem .5rem}
+.clinic-shell .law-item .b{padding:.65rem .8rem;min-height:44px}
+.clinic-site-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.35rem;margin-top:.7rem}
+.news-icon.news-has-briefs{position:relative}
+.news-icon.news-has-briefs::after{content:'';position:absolute;right:1px;top:1px;width:.45rem;height:.45rem;border-radius:50%;background:#ef9d57;border:1px solid #18293a}
+.clinic-coverage{margin:.85rem 0;border:1px solid #668694;border-radius:.45rem;padding:.35rem .7rem}
+.clinic-coverage label{display:flex;gap:.55rem;align-items:center;min-height:30px;font-weight:400}
+.clinic-coverage input{width:1.1rem;height:1.1rem;accent-color:#91cfb8}

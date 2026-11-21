@@ -1,0 +1,7 @@
+.studio-shell .studio-heading{background:linear-gradient(120deg,#43354e,#172c40);border-color:#72708e}
+.studio-shell .studio-heading strong,.studio-shell .studio-heading p{color:#e5d5f1}
+.studio-shell hr{border:0;border-top:1px solid #68818b;margin:1rem 0}
+.studio-shell .law-section .b{min-height:44px}
+.law-modal #studio-transfer-range{width:100%;accent-color:#aee4cf;min-height:2rem}
+.law-modal input[type=number]{font-variant-numeric:tabular-nums}
+@media(max-width:480px){.studio-shell .law-header{padding:.8rem}.studio-shell .law-nav button{overflow-wrap:anywhere}}

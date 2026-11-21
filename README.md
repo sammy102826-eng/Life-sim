@@ -102,6 +102,52 @@ The Fame profile now includes sponsorship contracts with annual deliverables, re
 
 Work → Special careers → Actor now includes performance-led role progression, agents, auditions, salary/backend negotiation, production decisions, releases, awards and franchise commitments. Other → Learning → Lessons provides the single acting-training system from age eight. See [ACTOR_GUIDE.md](ACTOR_GUIDE.md).
 
+## Lawyer career and law firm
+
+Choose a practice concentration while enrolled in law school, graduate, pass the bar exam, and apply for the Attorney job in Work. The promotion path runs through Senior Associate, Senior Partner, and Managing Partner. **Start a law firm** appears inside the attorney’s job menu after at least 10 years with the same employer, promotion to partner, performance of 75, career harmony of 60, supervisor relationship of 55, and a clean record. Graduates who already have a saved JD can select their concentration during founding if their transcript has none.
+
+The firm replaces your full-time job. Open it from **Work** to accept matters, manage staff and offices, handle hearings, or review finances and firm news. Case work spends hours and firm cash. Advance months in **Calendar** to renew working hours and post payroll, rent, and billing. **Age Up** closes any remaining months and opens a new firm year. Cases ready for trial are scheduled the following year. The procedures and public appointments are simplified for the fictional setting.
+
+Firm cash, client trust deposits, and personal cash have separate balances. Use **Finances** to contribute capital, borrow, and distribute available funds. The same life save preserves open matters, financial reports, pending decisions, staff, and the random seed. To run the focused browser tests after the test dependencies are installed, use `node --test tests/law-firm.test.cjs`.
+
+## Doctor career and medical practices
+
+Complete medical school, pass the medical licensing exam and apply for **Medical resident**. Choose a specialty in your job menu, work eight licensed years as a physician in that specialty and reach Senior Physician or above. **Start a practice** appears in the physician job menu when your performance, career harmony, supervisor relationship and clean record also qualify.
+
+The first practice purchases a solo office with personal capital. In **Work → Manage medical practice**, enroll patients, set fees, complete or refer appointments, handle uninsured balances and choose insurance networks. Larger facilities allow more permanent patients, staff and procedures. Secondary sites need a manager and physician to see patients. Each location tracks its own volume, costs, popularity and property value. **Age Up** posts routine visits, payroll, property upkeep and eligible insurer reimbursements. An established practice can fund an in-house insurance reserve, configure up to three tiers and offer coverage to individual patients.
+
+The **newspaper button** carries public clinic incidents and other major developments across law, government, royalty, entertainment, business and property. Use **Read & respond** for decisions. Unresolved public clinic and legal incidents remain actionable in past editions. Individual patient matters stay in the practice inbox. The focused browser checks run with `node --test tests/practice.test.cjs`.
+
+## Movie Director and studio ownership
+
+Open **Work → Special careers → Movie Director**, then name the studio and contribute startup capital. The studio occupies the current Work slot and gets a starting reputation boost from fame, acting credits and published writing credits. The writing portfolio is available in **Other → Learning → Lessons**.
+
+**Create Script** sets a title, genre, rating, release type, production format and casting plan. Work through writing, casting, filming and post-production. **Age Up** advances completed stages. Sign a theatrical, cable or streaming agreement in Marketing or Industry, then reserve a release date. Release reports include the cast, expenses, receipts, performance and award nominations. Eligible productions can attend the Screen Guild Awards and any studio-owned release can be the basis of a sequel or spin-off.
+
+**Financials** separates operating income, annual expenses and capital movements. Use the slider or text field to transfer funds. Withdrawals are taxed. The studio can seek outside investors, license its back catalog, or sell project rights and facilities if cash runs short. Major releases, awards, and public production incidents use the shared newspaper. Private production decisions stay in the studio inbox.
+
+Run the focused studio checks with `node --test tests/studio.test.cjs` after installing the test dependencies.
+
+## Crime, criminal court, prison and lawsuits
+
+**Other → Crime** groups offenses into collapsible categories. Scene props, costumes, vehicles and time choices are cosmetic. The game can record an incident, start a police encounter, or revisit a past incident after later evidence. Arrests open charges and counsel options. Judge hearings generally occur sooner than jury trials. Work and school continue until a guilty verdict.
+
+A prison sentence appears in the current **Work** slot. Other activity menus are disabled during custody. Prison jobs pay into a commissary-only balance. Each **Age Up** counts custody time, processes passive household finances and asset wear, and brings prison decisions or family news. Minor sentences are shown in months and resolve on the next annual tick. Appeals, parole eligibility, recapture and active convictions are recorded under **Other → Prison record**. Moving away can make existing relationships long-distance.
+
+**Other → Lawsuits** lists potential civil claims from life events. File within three years, then gather evidence, go through discovery and negotiation, and attend trial or pursue an appeal when eligible. Each stage has its own date and expenses. Opening the Crime or Lawsuits menu enables immediate popups for future standalone civil incidents. Background incidents are also listed in Lawsuits.
+
+The court and prison systems use fictional sentencing bands. Run the focused checks with `node --test tests/justice.test.cjs`.
+
+## Financial center, markets and tax filing
+
+Select your cash balance in the upper-right corner to open the **Financial center**. Investments includes public stocks, bonds, mutual funds, crypto and penny stocks. The company directory uses the same listings as business ownership. An IPO opens the company to trading, research changes its outlook and quote, and a split preserves the value of existing positions. The newspaper’s **Business** section covers financial developments and supports company watchlists and related decisions.
+
+Youth savings earns a higher rate before rolling into adult savings at 18. Adult banking supports checking, savings, high-yield accounts at participating banks, and traditional and Roth retirement accounts. Credit cards can cover a cash shortfall up to their available limit. Choose full-balance or minimum autopay and review annual interest, overdue amounts and cashback. **Loans** shows scheduled and extra repayments, including linked asset loans, student debt and practice or firm debt. Collection options include surrendering assets or restructuring while protecting the primary home and car.
+
+**Age Up** resolves three lottery draws, investment income, estates and the yearly tax return. Use **Review income tax return** in the year summary or open **Financial center → Taxes** to choose recorded deductions. Bank balances pay additional tax, refunds are deposited, and unpaid tax is withheld from later wages. Earlier unfiled returns use the available deductions at the next annual settlement. Asset checkout includes sales or transfer tax. Tax rates, exemptions and financial products are simplified game rules.
+
+Run the focused tests with `node --test tests/finance.test.cjs`.
+
 ## Testing tools
 
 Settings → Debug character editor provides validated stat, age, money, skill, relationship and mechanic-testing controls with one-step undo. The main menu also includes Born into royalty · Testing, with a choice of monarchy and guaranteed royal birth. See [DEBUG_GUIDE.md](DEBUG_GUIDE.md).

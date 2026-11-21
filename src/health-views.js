@@ -23,4 +23,4 @@ healthV=function(){medicalEnsure();const box=document.createElement('div');box.i
 const medicalOriginalFix=fix2;
 fix2=function(d){const next=medicalOriginalFix(d);medicalEnsure(next);return next;};
 const medicalOriginalDraw=draw;
-draw=function(rs){if(g){medicalEnsure();if(scr==='game'&&g.alive&&g.medical.queue.length&&!g.event&&!g.result&&!g.ysum&&!g.eduPopup&&!g.msq?.length&&!g.msReport&&!g.msTrainPopup&&!g.hsPopup&&!g.hsQueue?.length&&!iqm)g.event=g.medical.queue.shift();}return medicalOriginalDraw(rs);};
+draw=function(rs){if(g){medicalEnsure();if(scr==='game'&&g.alive&&!g.jail&&g.medical.queue.length&&!g.event&&!g.result&&!g.ysum&&!g.eduPopup&&!g.msq?.length&&!g.msReport&&!g.msTrainPopup&&!g.hsPopup&&!g.hsQueue?.length&&!iqm)g.event=g.medical.queue.shift();}return medicalOriginalDraw(rs);};
