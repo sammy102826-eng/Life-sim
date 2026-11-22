@@ -116,7 +116,8 @@ function uniFundingView(c){
  return teachSection('Funding and finances',teachStats([['University funds',loc(c.cash)],['Governance',c.status],['Academic independence',c.independence+'/100']])+
   teachSelect('funding','Primary funding source',Object.entries(UNI_FUNDING).map(([k,d])=>[k,d,c.funding===k]))+
   teachMoneyInput('tuition','Annual tuition per student',c.tuition)+teachB('Set funding and tuition','funding')+
-  (c.owned?teachMoneyInput('contribution','Personal contribution',0)+teachB('Contribute to the university','contribution'):'')+
+  (c.owned?teachMoneyInput('contribution','Owner transfer amount',0)+teachB('Contribute to the university','contribution')+
+   (c.status==='private'?teachB('Withdraw owner distribution','distribution'):''):'')+
   (last?teachSection('Last year’s ledger',Object.entries(last.ledger).map(([k,n])=>'<p>'+uiEscape(k)+' · '+loc(n)+'</p>').join('')):'<p>The ledger closes on Age Up.</p>'));
 }
 function uniDealsView(c){
@@ -209,11 +210,8 @@ function teachAction(action,arg,id){
     if(!teachHas(UNI_TYPES,focus))return;
     c.type=focus;
    }else if(action==='funding')error=uniFunding(teachValue('funding'),finAmount('teach-tuition'));
-   else if(action==='contribution'){
-    const amount=finAmount('teach-contribution');
-    if(!c.owned||!Number.isSafeInteger(amount)||amount<1||g.cash<amount)return toast('Enter a positive amount available in your personal cash.');
-    g.cash-=amount;LD('University owner contribution',-amount);c.ownerBasis=(c.ownerBasis||0)+amount;uniPost(c,'Personal contribution',amount);
-   }else if(action==='program')error=uniProgram('save',teachValue('program'),teachValue('credential'),Number(teachValue('courses')),Number(teachValue('rigor')),
+   else if(['contribution','distribution'].includes(action))error=uniOwnerTransfer(c,action,finAmount('teach-contribution'));
+   else if(action==='program')error=uniProgram('save',teachValue('program'),teachValue('credential'),Number(teachValue('courses')),Number(teachValue('rigor')),
     teachValue('program-name'),teachValue('program-college'));
    else if(action==='affairs'){
     if(!teachOnce(s,'affairs'))return toast('The student affairs office already reviewed concerns this year.');

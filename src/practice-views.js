@@ -183,9 +183,8 @@ function clinicFund(p,action){
   if(action==='draw'){
     const reserve=p.sites.reduce((n,x)=>n+clinicCost(p,PRACTICE_BUILDINGS[x.level].maintenance),0)+p.staff.reduce((n,e)=>n+e.salary,0);
     if(p.cash<amount+reserve*.25)return clinicMessage('Leave at least one quarter of fixed costs in the practice.');
-    const tax=Math.round(amount*C().t.inc/100);
     clinicEntry(p,null,'Owner distribution',-amount,'capital');
-    g.cash+=amount-tax;LD('Medical practice owner distribution before tax',amount);LD('Medical practice distribution tax',-tax);
+    const {tax}=finOwnerDistribution(amount,'Medical practice owner distribution before tax','Medical practice distribution tax');
     return clinicMessage('Personal cash increased by '+clinicMoney(amount-tax)+' after simulated withholding.');
   }
   if(action==='reserve'){

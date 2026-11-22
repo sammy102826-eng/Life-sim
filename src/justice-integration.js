@@ -108,7 +108,7 @@ appeal=function(){prisonShowPrompt('appeal');};
 
 function justiceLicenseRestricted(job){
  if(!g.rec)return false;
- const titles=['Medical resident','Physician','Senior physician','Attorney','Paralegal','Police officer','Enlist as a soldier','Military officer',
+ const titles=['Medical resident','Physician','Senior physician','Attorney','Paralegal','Police officer','Enlist as a soldier','Soldier','Military officer','Detective',
    'Security guard','Pilot','Commercial pilot','Teacher'];
  if(titles.includes(job[0]))return true;
  return job[1]==='finance'&&!!g.justice?.convictions.some(r=>!r.overturned&&r.charges.some(k=>['fraud','embezzle','identity','tax','bribery'].includes(k)));

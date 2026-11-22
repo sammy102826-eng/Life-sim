@@ -157,7 +157,7 @@ function genValidate(life){
  const integer=x=>Number.isSafeInteger(x)&&x>=0;
  const id=x=>typeof x==='string'&&/^[A-Za-z0-9_-]+$/.test(x);
  const country=x=>typeof x==='string'&&Object.hasOwn(life.w||{},x);
- const items=['car','home','boats','planes','lux','vent','lawFirm','practice','studio','university','land','islands','nations','position','investment','angel'];
+ const items=['car','home','boats','planes','lux','vent','lawFirm','practice','studio','university','land','islands','nations','position','investment','angel','museum','artifact','investigation'];
  const asset=x=>object(x)&&items.includes(x.key)&&object(x.value)&&Number.isFinite(x.net)&&Array.isArray(x.loans);
  if(!object(s)||s.version!==1||!id(s.id)||!integer(s.number)||!s.number||!integer(s.serial)||!integer(s.lastAge)||
   !['events','archive','land','islands','nations','trips'].every(k=>Array.isArray(s[k])))throw Error('Invalid generation record.');

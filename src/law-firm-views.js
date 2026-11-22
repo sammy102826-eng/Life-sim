@@ -155,11 +155,10 @@ function lawCapitalAction(f,action){
     if(f.cash<amount+runway)return 'Leave at least one month of firm overhead in cash.';
     const partnerCost=lawPartnerShares(f)/100;
     const gross=Math.round(amount*(1-partnerCost));
-    const tax=Math.round(gross*(g.w[g.country].t.inc||0)/100);
     lawPost(f,'capital','Owner and partner distributions',-amount);
-    g.cash+=gross-tax;f.personalIncome+=gross-tax;
-    LD('Law firm owner distributions',gross);LD('Law firm distribution tax',-tax);
-    return 'Your account received '+lawMoney(gross-tax)+' after simulated withholding and partner distributions.';
+    const {net}=finOwnerDistribution(gross,'Law firm owner distributions','Law firm distribution tax');
+    f.personalIncome+=net;
+    return 'Your account received '+lawMoney(net)+' after simulated withholding and partner distributions.';
   }
   if(action==='loan'){
     const limit=Math.round(f.scale*(65000+f.reputation*2200))+Math.round(lawValuation(f)*.2);

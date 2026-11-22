@@ -30,6 +30,7 @@ const SaveStore=(()=>{
    if(d.housing!=null){const q=d.housing;if(!object(q)||q.version!==1||!Number.isFinite(q.lastAge)||!Array.isArray(q.history)||!Array.isArray(q.incidents)||!object(q.used))throw Error('Invalid housing history.');}
    for(const home of [d.home,...(d.xh||[])].filter(Boolean)){
     if(!object(home))throw Error('Invalid property.');
+    if(home.parkingAdded!=null&&(!Number.isInteger(home.parkingAdded)||home.parkingAdded<0||home.parkingAdded>4))throw Error('Invalid parking upgrade.');
     for(const k of ['monthlyRent','deposit','arrears'])if(home[k]!=null&&(!Number.isFinite(home[k])||home[k]<0))throw Error('Invalid housing balance.');
     if(home.landlord!=null&&(!object(home.landlord)||typeof home.landlord.n!=='string'||!Number.isFinite(home.landlord.bond)))throw Error('Invalid landlord.');
     if(home.tenancy!=null){const t=home.tenancy;if(!object(t)||!['vacant','scheduled','applicants','occupied','notice'].includes(t.status)||!Array.isArray(t.candidates))throw Error('Invalid tenancy.');for(const k of ['rent','arrears','deposit'])if(t[k]!=null&&(!Number.isFinite(t[k])||t[k]<0))throw Error('Invalid tenancy balance.');if(['occupied','notice'].includes(t.status)&&(!object(t.person)||typeof t.person.n!=='string'||!Number.isFinite(t.person.bond)||!Number.isFinite(t.startAge)||!Number.isFinite(t.rent)))throw Error('Invalid tenant.');}
@@ -44,6 +45,10 @@ const SaveStore=(()=>{
    if(d.civics!=null)civicValidate(d);
    if(d.generations!=null)genValidate(d);
    if(d.teacher!=null||d.job?.teaching)teachValidate(d);
+   if(d.birthYear!=null&&(!Number.isInteger(d.birthYear)||d.birthYear<0||d.birthYear>4000))throw Error('Invalid birth year.');
+   if(d.investigator!=null||d.job?.investigationOwner)piValidate(d);
+   if(d.casinoPlay!=null||d.vent?.some(v=>v?.t==='cas'&&v.casino!=null))casinoValidate(d);
+   if(d.heritage!=null||d.job?.archaeology)heritageValidate(d.heritage,d);
    if(d.music!=null||d.job?.music)musicValidate(d);
    if(d.studio!=null||d.studioPrompt!=null||d.writingPortfolio!=null||d.job?.studioOwner)studioValidate(d);
    if(d.publicity!=null||d.news!=null||d.engagement!=null)narrativeValidate(d);

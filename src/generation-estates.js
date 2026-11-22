@@ -59,6 +59,8 @@ function genItems(life){
  }
  for(const [id,amount] of Object.entries(life.inv||{}))if(amount>0)add('investments','investment',{id,amount},amount,id);
  for(const a of life.angels||[])add('investments','angel',a,a.a,a.n);
+ rows.push(...heritageEstateItems(life));
+ if(life.investigator?.agency)add('business','investigation',life.investigator.agency,piValue(life.investigator.agency),'investigation');
  return rows;
 }
 function genAllocate(total,weights){
@@ -83,7 +85,7 @@ function genPlan(life=g){
  }
  const fin=life.financial||{},deposits=life.bank.chk+life.bank.sav+(fin.high||0)+(fin.youth||0)+
   (fin.retirement?.traditional||0)+(fin.retirement?.roth||0)+(life.retirementPlan?.balance||0);
- const liquid=Math.max(0,Math.round(life.cash))+Math.round(deposits);
+ const liquid=Math.max(0,Math.round(life.cash))+Math.round(deposits)+(life.casinoPlay?.round?.stake||0);
  const gross=liquid+items.reduce((n,x)=>n+x.worth,0);
  const allDebt=unsecured+items.reduce((n,x)=>n+x.worth-x.net,0);
  const funeral=GEN_FUNERALS[will.funeral]||GEN_FUNERALS.memorial,fee=Math.min(pr(funeral[1]),Math.max(0,gross-allDebt));
@@ -147,6 +149,8 @@ function genApplyProperty(life,items,previousFinance){
   }else if(key==='car'){if(!life.car)life.car=value;else life.xc.push(value);}
   else if(['boats','planes','lux','vent'].includes(key))life[key].push(value);
   else if(['land','islands','nations'].includes(key))s[key].push(value);
+  else if(key==='investigation')piTransferEstate(life,value);
+  else if(key==='artifact'||key==='museum')heritageInherit(life,key,value,item.net);
   else if(key==='university'){
    const t=teachState();
    if(!t.campus){
@@ -245,6 +249,9 @@ function genRebaseAsset(life,item,age,passedAge){
    island.age=age;island.used={};
    for(const p of island.projects)move(p,['due']);
   }
+ }else if(item.key==='vent'&&item.value.t==='cas'){
+  const v=life.vent.find(x=>x.t==='cas'&&x.casino?.id===item.value.casino?.id);
+  if(v)casinoRebase(v,age,passedAge);
  }else if(item.key==='vent'&&item.value.biz){
   const v=life.vent.find(x=>x.marketId===item.value.marketId);
   const s=v.biz;
@@ -262,7 +269,7 @@ function genContinue(id){
  if(!child||old.alive)return false;
  const estate=genFinalEstate(),bundle=estate.recipients.find(r=>r.id===id),own=genProfile(child);
  const next=newLife(false);
- next.name=child.n;next.age=child.age;next.birth=child.genBirth||old.country;next.country=child.genCountry||old.country;
+ next.name=child.n;next.age=child.age;next.birthYear=eraYear(old)-child.age;next.birth=child.genBirth||old.country;next.country=child.genCountry||old.country;
  next.w=genClone(old.w);next.wars=genClone(old.wars);next.nat=next.w[next.country].n;
  next.city=child.genCity||old.city;next.bcity=next.city;
  next.cash=own.savings+(bundle?.cash||0);next.edu=next.age>=18?Math.max(1,own.degree):0;

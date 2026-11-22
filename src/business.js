@@ -209,8 +209,7 @@ function bizWithdraw(v,amount){
  if(!Number.isSafeInteger(amount)||amount<1)return 'Enter a positive distribution.';
  const gross=Math.ceil(amount*100/v.own);
  if(!bizPay(v,'Shareholder distributions',gross))return 'Company funds cannot cover the distribution to all shareholders.';
- const tax=Math.round(amount*finTaxProfile().gains/100);
- g.cash+=amount-tax;LD('Business owner distribution',amount);LD('Business distribution tax',-tax);
+ finOwnerDistribution(amount,'Business owner distribution','Business distribution tax');
  return '';
 }
 function bizPatent(v,id,action){

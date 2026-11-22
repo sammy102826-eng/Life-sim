@@ -25,7 +25,7 @@ function newsPublish(kind,title,text,brief,key=null){
 const pressBuildYear=newsBuildYear;
 newsBuildYear=function(){
   const state=newsState();
-  const outstanding=state.editions.flatMap(e=>e.articles.filter(a=>['practice','lawIncident','studioIncident','businessUpdate','civics','civicsBill','generationEvent','teacherEvent','musicEvent'].includes(a.brief?.type)&&newsCanRespond(a,e)));
+  const outstanding=state.editions.flatMap(e=>e.articles.filter(a=>['practice','lawIncident','studioIncident','businessUpdate','civics','civicsBill','generationEvent','teacherEvent','musicEvent','heritageEvent','casinoEvent','piEvent'].includes(a.brief?.type)&&newsCanRespond(a,e)));
   pressBuildYear();
   for(const article of outstanding){
     if(!state.editions.some(e=>e.articles.some(a=>a.id===article.id)))state.editions[0]?.articles.unshift(article);
@@ -39,9 +39,17 @@ newsBuildYear=function(){
   }
   state.queued=[];
 };
+const NEWS_ACTION_AGES={housing:18,market:18,jobs:14,education:5,health:0,family:0,security:18,fame:13,royalty:0};
+const NEWS_BRIEF_AGES={musicEvent:16,generationEvent:0,spotlight:13,civics:18,civicsBill:18};
+function newsMinimumAge(article){
+ return article.brief?(NEWS_BRIEF_AGES[article.brief.type]??18):(NEWS_ACTION_AGES[article.action]??12);
+}
 function newsCanRespond(a,edition){
-  if(!a?.action||a.resolved||!edition)return false;
+  if(!a?.action||a.resolved||!edition||!g.alive||g.jail||g.age<newsMinimumAge(a))return false;
   if(a.brief?.type==='civics'||a.brief?.type==='civicsBill')return civicNewsAvailable(a,edition);
+  if(a.brief?.type==='piEvent')return piEventReady(piNewsEvent(a));
+  if(a.brief?.type==='casinoEvent')return casinoEventReady(casinoNewsEvent(a));
+  if(a.brief?.type==='heritageEvent')return heritageEventReady(g.heritage,heritageNewsEvent(a));
   if(a.brief?.type==='musicEvent')return musicEventReady(g.music,musicNewsEvent(a));
   if(a.brief?.type==='teacherEvent')return teachEventReady(g.teacher,teachNewsEvent(a));
   if(a.brief?.type==='generationEvent')return !!g.alive&&!g.jail&&genNewsItem(a)?.closed===false;
@@ -65,6 +73,9 @@ function newsBriefOptions(article){
   if(type==='financeMarket')return finNewsOptions(article);
   if(type==='civics'||type==='civicsBill')return civicNewsOptions(article);
   if(type==='musicEvent')return musicNewsOptions(article);
+  if(type==='heritageEvent')return heritageNewsOptions(article);
+  if(type==='casinoEvent')return casinoNewsOptions(article);
+  if(type==='piEvent')return piNewsOptions(article);
   if(type==='teacherEvent')return teachNewsOptions(article);
   if(type==='generationEvent')return genNewsOptions(article);
   if(type==='businessUpdate')return bizNewsOptions(article);
@@ -86,6 +97,9 @@ function newsResolveBrief(article,index){
   if(type==='financeMarket')return finNewsResolve(article,index);
   if(type==='civics'||type==='civicsBill')return civicNewsResolve(article,index);
   if(type==='musicEvent')return musicNewsResolve(article,index);
+  if(type==='heritageEvent')return heritageRespond(g.heritage,heritageNewsEvent(article),index);
+  if(type==='casinoEvent')return casinoRespond(casinoNewsEvent(article),index);
+  if(type==='piEvent')return piRespond(piNewsEvent(article),index);
   if(type==='teacherEvent')return teachNewsResolve(article,index);
   if(type==='generationEvent')return genNewsResolve(article,index);
   if(type==='businessUpdate')return bizNewsResolve(article,index);
@@ -223,7 +237,7 @@ lawFoundOpen=function(){
 };
 function newsValidateBriefs(state){
   if(!Array.isArray(state.editions)||state.editions.some(e=>!Array.isArray(e?.articles)))return;
-  const types=['practice','lawIncident','studioPress','studioIncident','studioAwards','studioClosure','financeMarket','businessUpdate','businessWorld','businessLocal','civics','civicsBill','generationEvent','teacherEvent','musicEvent',...Object.keys(PRESS_OPTIONS)];
+  const types=['practice','lawIncident','studioPress','studioIncident','studioAwards','studioClosure','financeMarket','businessUpdate','businessWorld','businessLocal','civics','civicsBill','generationEvent','teacherEvent','musicEvent','heritageEvent','casinoEvent','piEvent',...Object.keys(PRESS_OPTIONS)];
   const world=state.worldCycle;
   if(world!=null&&(!Number.isSafeInteger(world.age)||world.age<18||!Object.hasOwn(BUSINESS_COUNTRIES,world.key)||
     world.housing!==BUSINESS_COUNTRIES[world.key][3]))throw Error('Invalid world economic cycle.');
@@ -233,7 +247,7 @@ function newsValidateBriefs(state){
   const briefs=[...state.editions.flatMap(e=>e.articles.filter(a=>a.brief||a.storyKey&&a.id.startsWith('brief-'))),...queued.map(q=>q?.article)];
   const validPayload=a=>a.brief==null?a.action===null:types.includes(a.brief?.type)&&a.action==='brief';
   if(queued.some(q=>!Number.isSafeInteger(q?.age)||q.age<0)||briefs.some(a=>!a||!/^brief-\d+$/.test(a.id)||Number(a.id.slice(6))>serial||
-    !validPayload(a)||['generationEvent','teacherEvent','musicEvent'].includes(a.brief?.type)&&(!Number.isSafeInteger(a.brief.ref)||a.brief.ref<1)||['civics','civicsBill'].includes(a.brief?.type)&&
+    !validPayload(a)||['generationEvent','teacherEvent','musicEvent','heritageEvent','casinoEvent','piEvent'].includes(a.brief?.type)&&(!Number.isSafeInteger(a.brief.ref)||a.brief.ref<1)||['civics','civicsBill'].includes(a.brief?.type)&&
      (!Number.isSafeInteger(a.brief.ref)||a.brief.ref<0||typeof a.brief.international!=='boolean')||
     a.brief?.type==='civicsBill'&&!['committee','desk','reconsideration','veto'].includes(a.brief.stage)||a.brief?.type==='businessUpdate'&&(typeof a.brief.rumor!=='boolean'||!Number.isSafeInteger(a.brief.decision))||
     ['financeMarket','businessUpdate','businessWorld','businessLocal'].includes(a.brief?.type)&&typeof a.brief.ref!=='string'||['practice','studioIncident','studioPress'].includes(a.brief?.type)&&!Number.isSafeInteger(a.brief.ref)||

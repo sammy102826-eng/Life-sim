@@ -208,3 +208,30 @@ Open **Work → Special careers → Singer and bands** to start solo or audition
 Bands vote on recording, release, tours, label deals, and lineup changes. A signed label also reviews recording and release proposals. Earnings are split after the label’s cut and any advance repayment. Released recordings keep generating royalties for their original lineup after a member leaves. Look in the Newspaper for releases, lineup changes, breakups, and reunions.
 
 The game and its menus use the same 390 × 844 px mobile frame on computers and adapt to smaller phone screens.
+
+
+### Archaeology, museums, and eras
+
+Choose a birth year when starting a life. The calendar appears next to your age and carries over to your children. The **Mall** in **Stuff** has used, new, and luxury dealerships, a technology store, and departments for existing goods and services. Vehicles, technology, and online platforms unlock by year. Choose 1950 or 1960 to reach adulthood in an earlier era.
+
+Open **Work → Special careers → Archaeologist** to see available field programs. Survey and excavate in layers, then record stratigraphy and run a suitable lab test. After three field years, a documented discovery, and reputation of 42, you can buy an independent excavation permit. Protected finds go to a public collection. Eligible finds can go into your inventory or museum, be donated, or be sold through a licensed dealer.
+
+Open a museum from **Stuff**. Manage admissions, school visits, conservation, dealer transactions, gallery space, and staff against a separate budget. Find your owned pieces under **Personal artifact inventory**. Open a residence or owned property and choose **Customize home** to display objects, select an interior style, or add parking. Cars already owned stay in overflow when you lose parking capacity, and you need a free space for the next purchase. Displayed items may be stolen in a break-in.
+
+The Newspaper carries discoveries, museum openings, public decisions, and technology launches. Decision buttons appear when you meet the relevant requirements.
+
+### Casino and gambling
+
+Choose **Other → Casino → Go to Casino**. Play blackjack, five-card draw poker, Texas Hold’em, roulette, slots, horse racing, sports betting, keno, or dice. Each table explains its payouts and odds. Poker estimates use only the visible cards and blackjack shows the chance of busting on a hit. An unfinished card hand survives a save and load. Finish it before aging up.
+
+**Results and limits** shows seasonal net winnings, past games, and optional loss limits or a break until the next Age Up. Wagers use the character’s personal cash and net winnings appear in the tax report.
+
+Choose **Open your own Casino** to start a house game and grow it into a lounge, licensed casino, or resort. Fund construction from the venue’s reserve, set limits and house rules, and open games, hospitality spaces, and entertainment bookings as the floor grows. You can play at your own venue using its posted rules. Personal cash and the venue’s reserve settle separately. The annual report covers operations and taxes, and the Newspaper carries public decisions on audits, payouts, and neighborhood complaints.
+
+### Private investigations and military careers
+
+Become a police officer, take two supervised casework courses, and complete three patrol years before applying for detective. Three years in the detective division unlock **Work → Special careers → Private Investigator**. An agency can accept referrals, build evidence across sources, issue documented reports, and hire staff. Reputation brings more complex assignments and direct client requests. Public agency decisions appear in the Newspaper. Private client decisions stay with the agency.
+
+**Work → Find a full-time job** lists Soldier and Military officer. Soldiers keep the four-year enlistment and earn the tuition benefit after the final year of service.
+
+Personal distributions from businesses, studios, law firms, medical practices, museums, casinos, private universities, and investigation agencies use the character’s country income-tax rate as withholding. The annual tax return credits withheld amounts. The UAE starts with no personal income or payroll tax in the game. Business taxes and purchase taxes are separate.

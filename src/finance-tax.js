@@ -2,6 +2,17 @@ let finPriorLedger=null;
 function finTaxProfile(country=g.country){
  return {...FINANCE_TAX_DEFAULT,...finCountry(country)};
 }
+function finDistributionTax(amount,country=g.country){
+ return Math.round(amount*cl(g.w[country]?.t?.inc??0,0,60)/100);
+}
+function finOwnerDistribution(amount,incomeLabel,taxLabel){
+ const tax=finDistributionTax(amount),net=amount-tax;
+ g.cash+=net;LD(incomeLabel,amount);LD(taxLabel,-tax);
+ return {net,tax};
+}
+function finEnterpriseRate(country,min,max){
+ return country==='United Arab Emirates'?9:cl(g.w[country]?.t?.inc??22,min,max);
+}
 function finSalesTax(kind,price,country=g.country){
  const p=finTaxProfile(country);
  return Math.max(0,Math.round(price*(p[{car:'car',home:'home',lux:'jewelry'}[kind]||'other']||0)/100));
@@ -73,11 +84,13 @@ function finPrepareTaxes(s,ledger){
  add('Bank and bond interest',sum(/^(Savings interest|Youth account interest|High-yield savings interest|Bond interest)$/i));
  add('Rent and business distributions',sum(/^(Rental income|Recovered rent|.* profit|.* owner distributions?|Movie studio owner withdrawal|Medical practice owner distribution before tax|Real estate commissions?)$/i));
  add('Performances, publications and sponsorships',sum(/^(Acting production payments|Writing publication payment|.* appearance fees|.* sponsorship income|.* performance income)$/i));
+ add('Museum and archaeology income',sum(/^(Museum distribution|Artifact sale income|Excavation grant income)$/i));
+ add('Casino winnings after wagering losses',sum(/^Casino player net$/i));
  add('Taxable account withdrawals',(a.ordinary||0));
  const ordinary=rows.reduce((n,[,amount])=>n+amount,0);
  const inherited=a.inheritance||0,lotteryGross=a.lotteryGross||0,lotteryTax=a.lotteryTax||0;
  const capital=(a.gains||0);
- const withhold=(f.inc||0)+sum(/^(Acting income taxes|Movie studio withdrawal tax|Medical practice distribution tax|Law firm distribution tax|Business distribution tax)$/i,true)+lotteryTax;
+ const withhold=(f.inc||0)+sum(/^(Acting income taxes|Movie studio withdrawal tax|Medical practice distribution tax|Law firm distribution tax|Business distribution tax|Museum distribution tax|Casino distribution tax|University distribution tax|Investigation agency distribution tax)$/i,true)+lotteryTax;
  const maxMarginal=Math.max(0,Math.min(53,C().t.inc));
  const allowances=pr(p.allow+(g.age<18?2100:g.age>=65?1900:0));
  const charity=sum(/^(Charitable donations|News charitable response)$/i,true)+(a.charity||0);

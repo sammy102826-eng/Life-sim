@@ -185,3 +185,20 @@ function uniYear(s,c,active){
  const available=keys.filter(k=>!s.events.some(e=>e.key===k&&(!e.closed||e.age>=g.age-2)));
  if(available.length)teachEvent(s,['deficit','layoffs','repairs','safety'].includes(available[0])?available[0]:P(available));
 }
+
+function uniOwnerTransfer(c,action,amount){
+ if(!uniDean()||!c?.owned)return 'This university has no owner account to transfer funds.';
+ if(!Number.isSafeInteger(amount)||amount<1)return 'Enter a positive transfer amount.';
+ if(action==='contribution'){
+  if(g.cash<amount)return 'Personal cash cannot cover the contribution.';
+  g.cash-=amount;LD('University owner contribution',-amount);
+  c.ownerBasis=(c.ownerBasis||0)+amount;uniPost(c,'Personal contribution',amount);
+ }else if(action==='distribution'){
+  if(c.status!=='private')return 'Only a privately owned university can withdraw owner funds.';
+  const reserve=pr(10000)+Object.entries(c.roles).reduce((n,[key,count])=>n+Math.round(pr(UNI_ROLES[key][1])*count/12),0);
+  if(c.cash-amount<reserve)return 'Leave the operating reserve and one month of payroll in university funds.';
+  uniPost(c,'Owner distribution',-amount);
+  finOwnerDistribution(amount,'University owner distribution','University distribution tax');
+ }else return 'Unknown transfer type.';
+ return '';
+}

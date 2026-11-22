@@ -67,9 +67,8 @@ function studioTransfer(s,action,amount){
   }
   if(action==='withdraw'){
     if(s.cash<amount)return 'The studio cannot fund this withdrawal.';
-    const tax=Math.round(amount*Math.max(0,Math.min(60,C().t.inc))/100),net=amount-tax;
     studioPost(s,'capital','Owner withdrawals',-amount);
-    g.cash+=net;LD('Movie studio owner withdrawal',amount);LD('Movie studio withdrawal tax',-tax);
+    const {net,tax}=finOwnerDistribution(amount,'Movie studio owner withdrawal','Movie studio withdrawal tax');
     return 'The studio paid '+studioMoney(amount)+'. You received '+studioMoney(net)+' after '+studioMoney(tax)+' in tax.';
   }
   return '';

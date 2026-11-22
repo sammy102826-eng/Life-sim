@@ -42,7 +42,7 @@ const FINANCE_TAX={
  France:{allow:11300,child:1550,charity:.16,car:20,home:5.5,jewelry:20,other:20,estate:23,estateFree:160000,gains:21,lottery:0,retirement:5400},
  Japan:{allow:8600,child:1150,charity:.10,car:10,home:3,jewelry:10,other:10,estate:24,estateFree:260000,gains:18,lottery:0,retirement:4700},
  Australia:{allow:15000,child:1560,charity:.15,car:10,home:4,jewelry:10,other:10,estate:0,estateFree:0,gains:16,lottery:0,retirement:6400},
- 'United Arab Emirates':{allow:0,child:0,charity:.04,car:5,home:2,jewelry:5,other:5,estate:0,estateFree:0,gains:0,lottery:5,retirement:3200},
+ 'United Arab Emirates':{allow:0,child:0,charity:.04,car:5,home:2,jewelry:5,other:5,estate:0,estateFree:0,gains:0,lottery:0,retirement:3200},
  India:{allow:5700,child:900,charity:.08,car:18,home:5,jewelry:5,other:12,estate:0,estateFree:0,gains:14,lottery:30,retirement:3000},
  'Switzerland':{allow:13500,child:1800,charity:.12,car:8.1,home:2,jewelry:8.1,other:8.1,estate:9,estateFree:280000,gains:7,lottery:12,retirement:6200}
 };
