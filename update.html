@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#16233a">
+  <title>Update Born to Run</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #16233a; color: #f5f2ea; }
+    main { max-width: 390px; margin: 10vh auto; padding: 12px; }
+    button, a { display: inline-block; padding: 12px; background: #f2b134; color: #16233a; border: 0; border-radius: 8px; font: inherit; font-weight: 700; }
+    button[disabled] { opacity: .6; }
+    [hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Update Born to Run</h1>
+    <p>Save any game you have open before updating. This page keeps your existing save slots.</p>
+    <p role="status" id="update-status">Connect to the internet, then download the latest game.</p>
+    <button id="update-button">Download latest game</button>
+    <a id="launch-game" href="./" hidden>Open updated game</a>
+  </main>
+  <script>
+    const button = document.getElementById('update-button');
+    const status = document.getElementById('update-status');
+    const launch = document.getElementById('launch-game');
+
+    function ready() {
+      status.textContent = 'The game is ready. Open it to load your save.';
+      button.disabled = false;
+      launch.hidden = false;
+    }
+
+    button.addEventListener('click', async () => {
+      if (!window.isSecureContext || !navigator.serviceWorker) {
+        status.textContent = 'Open this page in Safari or Chrome on a secure connection.';
+        return;
+      }
+      button.disabled = true;
+      status.textContent = 'Checking and downloading the game…';
+      try {
+        const registration = await navigator.serviceWorker.register('./offline-worker.js', {updateViaCache: 'none'});
+        await registration.update();
+        const worker = registration.installing || registration.waiting;
+        if (!worker) return ready();
+        await new Promise((resolve, reject) => {
+          const check = () => {
+            if (worker.state === 'installed') worker.postMessage('activate-release');
+            if (worker.state === 'activated') finish(resolve);
+            if (worker.state === 'redundant') finish(reject, new Error('Download interrupted'));
+          };
+          const timer = setTimeout(() => finish(reject, new Error('Update timed out')), 45000);
+          function finish(done, value) {
+            clearTimeout(timer);
+            worker.removeEventListener('statechange', check);
+            done(value);
+          }
+          worker.addEventListener('statechange', check);
+          check();
+        });
+        if (!navigator.serviceWorker.controller) await navigator.serviceWorker.ready;
+        ready();
+      } catch {
+        status.textContent = 'The download did not complete. Stay online and try again.';
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

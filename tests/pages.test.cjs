@@ -5,6 +5,7 @@ const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {execFileSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..');
 let server,browser,base;
+const overrides=new Map();
 const entry='/Life-sim/Life%20sim%20relationships%20.html';
 before(async()=>{
   // Serve only the project prefix: a root-relative /src/... asset must fail here.
@@ -18,7 +19,7 @@ before(async()=>{
       if(err)return res.writeHead(404).end();
       const types={'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.webmanifest':'application/manifest+json'};
       const type=types[path.extname(file)]||'text/html';
-      res.writeHead(200,{'Content-Type':type});res.end(data);
+      res.writeHead(200,{'Content-Type':type,'Cache-Control':'no-store'});res.end(overrides.get(relative)??data);
     });
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -125,4 +126,57 @@ test('a phone can reopen the installed game offline and continue a saved life',a
   await reopened.reload();
   await reopened.getByRole('button',{name:'Create your own life',exact:true}).waitFor();
   assert.deepEqual(errors,[]);
+});
+
+test('an existing installation can replace its stale cache and find the new content without deleting saves',async t=>{
+  t.after(()=>overrides.clear());
+  const page=await pageFor(t,{isMobile:true,hasTouch:true,viewport:{width:390,height:844}});
+  const legacyVersion='11111111111111111111';
+  const assetFile=fs.readFileSync(path.join(root,'offline-assets.js'),'utf8');
+  const actualVersion=assetFile.match(/"[a-f0-9]{20}"/)[0].slice(1,-1);
+  // Reproduce the pre-update worker keeping an old game window as a client.
+  overrides.set('offline-assets.js', 'const OFFLINE_VERSION="'+legacyVersion+'"; const OFFLINE_ASSETS=["index.html","Life sim relationships .html"];');
+  overrides.set('offline-worker.js', `importScripts('./offline-assets.js');
+    const prefix='born-to-run:'+self.registration.scope+':', cache=prefix+OFFLINE_VERSION;
+    self.addEventListener('install',e=>e.waitUntil(caches.open(cache).then(c=>c.addAll(OFFLINE_ASSETS))));
+    self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+    self.addEventListener('fetch',e=>e.respondWith(caches.open(cache).then(c=>c.match(e.request)).then(r=>r||fetch(e.request))));`);
+  overrides.set('Life sim relationships .html', `<!doctype html><title>Old game</title><p>Old offline game</p>
+    <script>navigator.serviceWorker.register('./offline-worker.js');</script>`);
+  await page.goto(base+entry);
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+  await page.evaluate(()=>localStorage.setItem('bt_slot_0','legacy-save-copy'));
+  const updater=await page.context().newPage();
+  overrides.clear();
+  await updater.goto(base+'/Life-sim/update.html');
+  await updater.getByRole('button',{name:'Download latest game'}).click();
+  await updater.getByRole('link',{name:'Open updated game'}).click();
+  await updater.getByText('Downloaded build '+actualVersion.slice(0,12),{exact:true}).waitFor();
+  assert.ok(await page.getByText('Old offline game').isVisible());
+  assert.equal(await updater.evaluate(()=>localStorage.getItem('bt_slot_0')),'legacy-save-copy');
+  await updater.evaluate(()=>localStorage.removeItem('bt_slot_0'));
+  await startLife(updater);
+  await updater.getByRole('button',{name:'Work',exact:true}).click();
+  await updater.getByRole('button',{name:'Find a full-time job',exact:true}).click();
+  const military=updater.getByRole('heading',{name:'Military service'});
+  await military.waitFor();
+  assert.equal(await military.locator('..').getByRole('button',{name:/^Soldier /}).count(),1);
+  assert.equal(await military.locator('..').getByRole('button',{name:/^Military officer /}).count(),1);
+  await updater.getByRole('button',{name:'Open newspaper',exact:true}).click();
+  await updater.getByRole('button',{name:'Investigations',exact:true}).click();
+  await updater.getByRole('heading',{name:'Private investigation desk'}).waitFor();
+
+  // A subsequent update waits while the game is open and can be installed on demand.
+  await updater.evaluate(()=>{newsPopupOpen=false;if(!save(0,'life'))throw Error('Save failed');go('title');});
+  const nextVersion='22222222222222222222';
+  overrides.set('offline-assets.js',assetFile.replace(actualVersion,nextVersion));
+  await updater.getByRole('button',{name:'Check for game updates'}).click();
+  await updater.getByRole('button',{name:'Install update and reload'}).click();
+  await updater.getByText('Downloaded build '+nextVersion.slice(0,12),{exact:true}).waitFor();
+  await updater.context().setOffline(true);
+  const response=await updater.reload();
+  assert.ok(response.fromServiceWorker());
+  await updater.getByRole('button',{name:'Load game',exact:true}).click();
+  await updater.getByRole('button',{name:'Load',exact:true}).first().click();
+  assert.match(await updater.locator('.hd').innerText(),/Pages Test/);
 });

@@ -24,7 +24,7 @@ Saves in Codex/local previews do not automatically move to `sammy102826-eng.gith
 
 ## Offline releases
 
-After changing game files, run `npm run offline:build` and commit the updated `offline-assets.js` with those changes. The command discovers local scripts, styles, and icons, then fingerprints the files used by the game. The service worker caches the full release before marking it ready. An update takes over once the previous release’s game tabs and Home Screen windows are closed.
+After changing game files, run `npm run offline:build` and commit the updated `offline-assets.js` with those changes. The command discovers local scripts, styles, and icons, then fingerprints the files used by the game. The service worker caches the full release before marking it ready. After the download, the title screen can install the update and reload. Settings can check for a release during play. Save before returning to the title screen. If an older install has no update control, use the online updater at `update.html`. The updater stays outside the offline cache so it can reach the server even from an older build.
 
 Run `node --test tests/pages.test.cjs` to verify the launcher, manifest, and offline reopening and save loading at the GitHub Pages path. Run `npm test` for the whole-game regression suite.
 

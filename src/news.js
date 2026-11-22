@@ -1,5 +1,5 @@
 let newsPopupOpen=false,newsEditionAge=null,newsSection='all';
-function newsSetSection(section){if(['all','international','business','fun'].includes(section)){newsSection=section;draw(1);}}
+function newsSetSection(section){if(Object.hasOwn(NEWS_SECTIONS,section)){newsSection=section;draw(1);}}
 function newsState(){if(!g.news)g.news={version:1,lastAge:-1,seed:[...g.name+'|'+g.birth].reduce((n,c)=>(Math.imul(n,31)+c.charCodeAt(0))>>>0,2166136261),editions:[],snapshot:null,market:null,pending:null};return g.news;}
 function newsRandom(age,index){let n=(newsState().seed^Math.imul(age+1,2654435761)^Math.imul(index+1,1597334677))>>>0;n^=n<<13;n^=n>>>17;n^=n<<5;return (n>>>0)/4294967296;}
 function newsSnapshot(){return {age:g.age,job:g.job?.t||'',degrees:g.collegeTrack?.degrees?.length||0,children:kids().length,homes:stuffAllHomes().filter(h=>h.own).map(h=>h.id),royal:g.royalty?.status||'',royalTitle:royalActive()?royalTitle(royalPlayer()):'',fame:g.fm||0};}
@@ -16,8 +16,9 @@ function newsIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d=
 function newsOpen(){if(publicityBusy())return toast('Finish the current decision first.');newsBuildYear();newsEditionAge=g.age;newsSection='all';newsPopupOpen=true;draw(1);}
 function newsClose(){newsPopupOpen=false;draw(1);}
 function newsSelect(age){if(!newsState().editions.some(e=>e.age===Number(age)))return;newsEditionAge=Number(age);draw(1);}
-const NEWS_SECTIONS={all:'Personal & home country',international:'International',business:'Business',fun:'Just for Fun'};
+const NEWS_SECTIONS={all:'Personal & home country',international:'International',business:'Business',investigations:'Investigations',fun:'Just for Fun'};
 function newsArticleSection(article){
+ if(article.kind==='investigations'||article.brief?.type==='piEvent')return 'investigations';
  if(article.kind==='fun')return 'fun';
  if(article.kind==='international')return 'international';
  return ['business','market'].includes(article.kind)?'business':'all';
@@ -33,6 +34,7 @@ function newsPopup(){
   ${s.editions.map(x=>`<option value=${x.age} ${x.age===e.age?'selected':''}>Age ${x.age}</option>`).join('')}</select>
   <nav class="fin-news-tabs" aria-label="Newspaper sections">${Object.entries(NEWS_SECTIONS).map(([k,label])=>`<button class="pill${newsSection===k?' on':''}" aria-pressed="${newsSection===k}" onclick="newsSetSection('${k}')">${label}</button>`).join('')}</nav>
   ${newsEarlierDecisions(s,e,newsSection)}
+  ${newsSection==='investigations'&&e.age===g.age?'<article><h2>Private investigation desk</h2><p>Follow public case reviews and agency decisions here. To open an agency, complete three years of patrol and three years in the detective division, then visit Special careers in Work.</p></article>':''}
   <div class=newspaper-columns>${articles.map(a=>`<article><p class=newspaper-section>${badges(a)} · ${uiEscape(a.kind)}</p><h2>${uiEscape(a.title)}</h2><p>${uiEscape(a.text)}</p>${a.resolved?'<p>Decision recorded</p>':newsCanRespond(a,e)?B('Read & respond',`newsArticle('${a.id}')`):''}</article>`).join('')||'<p>No stories appeared in this section for this edition.</p>'}</div>
   ${B('Close newspaper','newsClose()')}</div></div>`;
 }

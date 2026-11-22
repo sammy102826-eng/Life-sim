@@ -67,7 +67,7 @@ function piSpend(a,label,amount){
  piLedger(a,label,-amount);return true;
 }
 function piHeadline(title,summary,event=null){
- return newsPublish('community',title,summary,event?{type:'piEvent',ref:event.id}:null);
+ return newsPublish('investigations',title,summary,event?{type:'piEvent',ref:event.id}:null);
 }
 function piFound(name){
  const s=piState();
