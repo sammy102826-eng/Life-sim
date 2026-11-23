@@ -89,7 +89,7 @@ function genPropertyOpen(page='catalog',id=null){
   }
  }
  genPropertyPage=page;genSelected=id;
- tab='Stuff';stuffSelected=null;stuffPurchaseOffer=null;stuffShopTab='Property';
+ tab='Stuff';NV.S=['Mall','land'];stuffSelected=null;stuffPurchaseOffer=null;stuffShopTab='Property';
  draw(1);
 }
 function genPropertyView(){

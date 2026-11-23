@@ -194,8 +194,8 @@ function writingPortfolioAdvance(){
   const s=g.writingPortfolio,p=s?.draft;
   if(!p||p.last>=g.age||studioBlocked())return;
   p.last=g.age;
-  if(p.stage===0){p.stage=1;p.quality=studioClamp(p.quality+13);return toast('The revision is complete. Submit it next year.');}
-  if(p.quality<68){p.quality=studioClamp(p.quality+8);return toast('An editor asked for a revision. The next submission opens next year.');}
+  if(p.stage===0){p.stage=1;p.quality=studioClamp(p.quality+Math.round(13*talentFactor('writing')));return toast('The revision is complete. Submit it next year.');}
+  if(p.quality<68){p.quality=studioClamp(p.quality+Math.round(8*talentFactor('writing')));return toast('An editor asked for a revision. The next submission opens next year.');}
   s.credits.push({name:p.name,type:p.type,genre:p.genre,quality:p.quality,age:g.age});
   s.draft=null;
   const fee=pr(p.type==='Screenplay'?2400:1400);g.cash+=fee;LD('Writing publication payment',fee);

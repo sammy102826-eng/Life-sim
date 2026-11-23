@@ -23,6 +23,11 @@ const SaveStore=(()=>{
    if(!Number.isInteger(d.age)||d.age<0||d.age>1000||typeof d.alive!=='boolean')throw Error('Invalid age or life status.');
    for(const k of ['health','happy','smarts','looks','cash','edu'])if(!Number.isFinite(d[k]))throw Error('Invalid '+k+'.');
    if(!Array.isArray(d.log)||!d.log.every(x=>typeof x==='string'))throw Error('Invalid life log.');
+   if(d.appearance!=null&&(!object(d.appearance)||Object.entries(APPEARANCE).some(([key,list])=>{
+    const value=d.appearance[key];return !Number.isInteger(value)||value<0||value>=list.length;
+   })))throw Error('Invalid character appearance.');
+   if(d.talent!=null&&!Object.hasOwn(LIFE_TALENTS,d.talent))throw Error('Invalid natural aptitude.');
+
    for(const k of ['rel','pt','wars','cond','deg','loans','vent','xc','xh','lux','boats','planes','msq','hsQueue','dz','lic','seen'])if(d[k]!=null&&!Array.isArray(d[k]))throw Error('Invalid '+k+' list.');
    if(d.rel)for(const p of d.rel){if(!object(p)||typeof p.id!=='string'||! /^[\w-]+$/.test(p.id)||typeof p.n!=='string'||/["'`&]/.test(p.n)||!Number.isFinite(p.age)||!Number.isFinite(p.bond)||typeof p.alive!=='boolean')throw Error('Invalid relationship.');}
    if(d.educationJourney!=null){const e=d.educationJourney;if(!object(e))throw Error('Invalid education journey.');for(const k of ['elementaryReports','internships','scholarships','bills'])if(e[k]!=null&&!Array.isArray(e[k]))throw Error('Invalid education history.');if(e.preschool!=null&&(!object(e.preschool)||!Array.isArray(e.preschool.classmates)||!Array.isArray(e.preschool.years)||!object(e.preschool.skills)))throw Error('Invalid preschool history.');}

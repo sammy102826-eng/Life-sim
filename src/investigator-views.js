@@ -96,9 +96,11 @@ function piDecisionView(s){
  return studioSection('Agency decisions',open.map(e=>{
   const [title,text,,options]=PI_EVENTS[e.key];
   return '<details class="card"><summary>'+title+'</summary><p>'+text+'</p>'+
-   (e.article?B('Open in Newspaper',piCall('newsOpenBrief',e.article)):
-    options.map(([label,cost],i)=>piB(label+(cost?' · '+loc(piCost(s.agency,cost)):''),'respond',e.id,i)).join(''))+'</details>';
- }).join('')||'<p>No unresolved decisions.</p>');
+   (options.map(([label,cost],i)=>piB(label+(cost?' · '+loc(piCost(s.agency,cost)):''),'respond',e.id,i)).join(''))+'</details>';
+ }).join('')||'<p>No unresolved decisions.</p>')+studioSection('Public case coverage',
+  [...(g.news?.editions||[]).flatMap(e=>e.articles),...(g.news?.queued||[]).map(x=>x.article)]
+   .filter(a=>a.kind==='investigations'||a.brief?.type==='piEvent').slice(0,15)
+   .map(a=>'<h4>'+uiEscape(a.title)+'</h4><p>'+uiEscape(a.text)+'</p>').join('')||'<p>No public coverage yet.</p>');
 }
 function piAgencyView(){
  const s=piState(),a=s.agency;

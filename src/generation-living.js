@@ -41,7 +41,7 @@ function genRoll(life,seed,range=100){
 }
 const genFind=id=>g.rel.find(r=>r.id===id);
 function genRel(role,age,parents=[],name=null){
- const s=genState(),last=g.name.split(' ').at(-1);
+ const s=genState(),last=(genFind(parents[0])?.n||g.name).split(' ').at(-1);
  const serial=++s.serial;
  const names=['Alex','Jordan','Avery','Robin','Morgan','Casey','Riley','Noor','Mateo','Ivy','Maya','Sam','Nico','Kai','June','Rosa','Elena'];
  const first=names[genRoll(g,'person'+serial,names.length)];
@@ -172,25 +172,26 @@ function genLifePerson(r){
   }
  }
  r.m=p.savings;
- if(!['Child','Sibling','Step-sibling'].includes(r.role))return;
+ if(['Parent','Mother','Father','Grandparent','Grandmother','Grandfather','Spouse','Partner','Relative','In-law','Ex','Enemy'].includes(r.role))return;
+ if(r===partner())return;
  if(r.age>=23&&r.age<=46&&(!p.partner||!genFind(p.partner)?.alive)&&genRoll(g,'spouse:'+r.id)<20){
   const role=r.role==='Child'?'In-law':'Relative';
-  const spouse=genRel(role,r.age+genRoll(g,'partner:'+r.id,8)-3);
+  const spouse=genRel(role,r.age+genRoll(g,'partner:'+r.id,8)-3,[],r.t==='fam'?null:nm2());
   spouse.genPartner=r.id;p.partner=spouse.id;
   L(uiEscape(r.n)+' married '+uiEscape(spouse.n)+'.');
  }
  const children=g.rel.filter(x=>x.genParents?.includes(r.id));
  if(r.age>=24&&r.age<=45&&children.length<3&&(p.partner&&genFind(p.partner)?.alive||genRoll(g,'single-parent:'+r.id)<12)&&
    genRoll(g,'child:'+r.id)<26){
-  const role=r.role==='Child'?'Grandchild':genRoll(g,'niece:'+r.id)<50?'Niece':'Nephew';
+  const role=r.role==='Child'?'Grandchild':['Sibling','Step-sibling'].includes(r.role)?(genRoll(g,'niece:'+r.id)<50?'Niece':'Nephew'):'Relative';
   const baby=genRel(role,0,[r.id,...(p.partner?[p.partner]:[])]);
-  genEvent('newRelative',r.n+' welcomed '+baby.n,'You can decide how to support the new household.',{person:r.id,baby:baby.id});
+  if(r.t==='fam')genEvent('newRelative',r.n+' welcomed '+baby.n,'You can decide how to support the new household.',{person:r.id,baby:baby.id});
   L(uiEscape(r.n)+' welcomed '+uiEscape(baby.n)+' into the family.');
  }
 }
 function genFamilyYear(){
  const s=genState(),f=genFamilyInit();
- for(const r of g.rel.filter(r=>r.alive&&['Child','Sibling','Step-sibling','Grandchild','Niece','Nephew'].includes(r.role)))genLifePerson(r);
+ for(const r of g.rel.filter(r=>r.alive&&r.role!=='Pet'))genLifePerson(r);
  const parents=f.parents.map(genFind).filter(r=>r?.alive);
  if(!parents.length||g.age<6||s.events.some(e=>e.kind==='parents'&&!e.closed))return;
  const lag=g.age-f.since;

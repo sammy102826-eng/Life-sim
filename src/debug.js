@@ -2,7 +2,7 @@
 let debugOpen=false,debugMessage='',debugUndo=null,debugOwner=null,debugRoyalPending=false;
 const DEBUG_INTEGER_FIELDS=['age','iq','edu','jail','rec','soc'];
 const DEBUG_FIELDS=[['age','Age',0,120],['cash','Cash',-1e12,1e12],['health','Health',0,100],['happy','Happiness',0,100],['smarts','Smarts',0,100],['looks','Looks',0,100],['fit','Fitness',0,100],['iq','IQ',40,200],['fm','Fame',0,100],['fame','Career fame',0,100],['soc','Social followers',0,1e9],['perf','Work performance',0,100],['sk','Special-career skill',0,100],['gpa','GPA',0,4],['edu','Education level',0,3],['sloan','Student debt',0,1e12],['rec','Criminal record',0,100],['jail','Jail years',0,100],['cred','Credit score',300,850],['les.acting','Acting skill',0,100],['les.music','Music skill',0,100],['les.sport','Sports skill',0,100],['bank.chk','Checking',0,1e12],['bank.sav','Savings',0,1e12],['inv.stock','Stocks',0,1e12],['inv.bond','Bonds',0,1e12],['inv.crypto','Crypto',0,1e12]];
-function debugGet(path){return path.split('.').reduce((o,k)=>o?.[k],g);}
+function debugGet(path){return path==='birthYear'?eraYear()-g.age:path.split('.').reduce((o,k)=>o?.[k],g);}
 function debugSet(path,value){const keys=path.split('.'),key=keys.pop(),obj=keys.reduce((o,k)=>o[k]||(o[k]={}),g);obj[key]=value;}
 function debugReady(){return !!g&&typeof g.name==='string'&&!!g.w;}
 function debugOpenEditor(){if(!debugReady())return;debugOpen=true;debugMessage='';if(debugOwner!==g){debugUndo=null;debugOwner=g;}draw(1);}

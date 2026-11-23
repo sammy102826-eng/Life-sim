@@ -238,6 +238,9 @@ lawFoundOpen=function(){
 function newsValidateBriefs(state){
   if(!Array.isArray(state.editions)||state.editions.some(e=>!Array.isArray(e?.articles)))return;
   const types=['practice','lawIncident','studioPress','studioIncident','studioAwards','studioClosure','financeMarket','businessUpdate','businessWorld','businessLocal','civics','civicsBill','generationEvent','teacherEvent','musicEvent','heritageEvent','casinoEvent','piEvent',...Object.keys(PRESS_OPTIONS)];
+  const journal=state.journalArchive;
+  if(journal!=null&&(!Array.isArray(journal)||journal.some(a=>!Number.isSafeInteger(a?.age)||a.age<0||
+    typeof a.title!=='string'||typeof a.text!=='string')))throw Error('Invalid journal archive.');
   const world=state.worldCycle;
   if(world!=null&&(!Number.isSafeInteger(world.age)||world.age<18||!Object.hasOwn(BUSINESS_COUNTRIES,world.key)||
     world.housing!==BUSINESS_COUNTRIES[world.key][3]))throw Error('Invalid world economic cycle.');

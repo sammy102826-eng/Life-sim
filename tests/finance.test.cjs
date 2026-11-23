@@ -87,7 +87,7 @@ test('an owned company IPO, patent and share split affect the same exchange list
  const milestone=p.getByRole('button',{name:'Nice!',exact:true});
  for(let i=0;i<30&&await milestone.isVisible();i++)await milestone.click();
  await p.getByRole('button',{name:'Open newspaper',exact:true}).click();
- await p.getByRole('button',{name:'Business',exact:true}).click();
+ await p.getByRole('button',{name:'Nunya Beeswax',exact:true}).click();
  await p.locator('.newspaper article').filter({hasText:'IPO: Quartz Tools'}).getByRole('button',{name:'Read & respond'}).click();
  await p.getByRole('button',{name:'Review Quartz Tools in Investments'}).click();
  assert.equal(await p.evaluate(()=>NV.O[0]==='Finance'&&finPage==='market'),true);

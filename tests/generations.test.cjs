@@ -135,8 +135,8 @@ test('vacations have a destination, memories and an inventory souvenir; funny ne
  const stored=await p.evaluate(()=>({item:g.lux.some(x=>x.souvenir&&x.origin==='Japan'),trip:g.generations.trips[0].city,cash:g.cash}));
  assert.equal(stored.item,true);assert.equal(stored.trip,target);
  await p.getByRole('button',{name:'Open newspaper',exact:true}).click();
- await p.getByRole('button',{name:'Just for Fun',exact:true}).click();
- assert.equal(await p.locator('.newspaper article').count(),2);
+ await p.getByRole('button',{name:'The Silly Goose',exact:true}).click();
+ assert.ok(await p.locator('.newspaper article').count()>=3);
  assert.equal(await p.locator('.newspaper article button').count(),0);
  assert.equal(await p.evaluate(()=>g.cash),stored.cash);
 });

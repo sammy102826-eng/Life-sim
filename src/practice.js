@@ -36,7 +36,7 @@ function clinicRecord(p,text){
 }
 function clinicChange(p,rep,quality,respect,x=null){
   p.reputation=clinicClamp(p.reputation+rep);
-  p.quality=clinicClamp(p.quality+quality);
+  p.quality=clinicClamp(p.quality+(quality>0?Math.max(1,Math.round(quality*talentFactor('medicine'))):quality));
   p.respect=clinicClamp(p.respect+respect);
   if(x)x.popularity=clinicClamp(x.popularity+rep);
 }

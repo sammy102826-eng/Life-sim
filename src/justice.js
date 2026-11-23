@@ -53,7 +53,8 @@ function justiceAttempt(){
    scene[slot]=value;
  }
  s.ageTaken=g.age;
- const hit=justiceRandom(s,1,100)<=d[6],stopped=!hit&&justiceRandom(s,1,100)<=59;
+ const aptitude=g.talent==='stealth'?1:g.talent?-.45:0;
+ const hit=justiceRandom(s,1,100)<=cl(d[6]+8*aptitude,1,99),stopped=!hit&&justiceRandom(s,1,100)<=59-10*aptitude;
  g.heat=cl((g.heat||0)+(d[4]>=5?12:5));
  if(stopped){
    return justiceDecision('stop',{key,charges:[key],evidence:justiceClamp(d[9]+justiceRandom(s,-9,9)),source:justicePick(s,JUSTICE_EVIDENCE),incident:0});

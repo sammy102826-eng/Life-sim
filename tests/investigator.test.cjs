@@ -123,15 +123,16 @@ test('staff capacity, deadlines and payroll change the agency without duplicatin
  assert.equal(result.expired,'expired');assert.ok(result.rep&&result.once&&result.expenses>0&&result.shortfall>0&&result.closed);
  assert.equal(result.after,3);
 });
-test('military jobs appear as full-time listings and an enlistment pays its last year before granting tuition',async t=>{
+test('military jobs appear under the dedicated Work menu and an enlistment pays its last year before granting tuition',async t=>{
  const p=await setup(t);await quiet(p);
  const lists=await p.evaluate(()=>{
   const w=()=>new DOMParser().parseFromString(workV(),'text/html');
   wsel=null;wsub='Special';const special=w().body.textContent;
   wsub='Full-time';const regular=w().body.textContent;
-  return {regular,special};
+  wsub='Military';return {regular,special,military:w().body.textContent};
  });
- assert.match(lists.regular,/Military officer/);assert.match(lists.regular,/Soldier/);
+ assert.doesNotMatch(lists.regular,/Military officer|Soldier/);
+ assert.match(lists.military,/Become an officer/);assert.match(lists.military,/Enlist as a soldier/);
  assert.doesNotMatch(lists.special,/Military officer|Enlist as a soldier/);
  const result=await p.evaluate(()=>{
   const i=JB.ft.findIndex(x=>x[0]==='Soldier');

@@ -86,8 +86,8 @@ test('a field team surveys and documents a discovery before receiving an indepen
 
 test('museum funds cover acquisitions, staff, school visits and annual operations',async t=>{
  const p=await setup(t);await quiet(p);
- await p.getByRole('button',{name:'Stuff',exact:true}).click();
- await p.getByRole('button',{name:'Open your own museum',exact:true}).click();
+ await p.getByRole('button',{name:'Other',exact:true}).click();
+ await p.getByRole('button',{name:/^Museum Open or manage/}).click();
  await p.getByLabel('Museum name',{exact:true}).fill('River Terrace Museum');
  await p.getByRole('button',{name:'Open museum',exact:true}).click();
  const result=await p.evaluate(()=>{
@@ -119,15 +119,15 @@ test('museum funds cover acquisitions, staff, school visits and annual operation
 test('historic timelines keep future products out of the Mall, and Age Up advances the year',async t=>{
  const p=await setup(t);await quiet(p);
  const details=await p.evaluate(()=>{
-  g.birthYear=1970;g.age=12;g.cash=30000;g.log=[];tab='Life';draw(1);
+  g.birthYear=1970;g.age=12;g.cash=30000;g.log=[];L('A new year began.');tab='Life';draw(1);
   return {year:eraYear(),classic:eraCarAvailable(STUFF_CARS.find(c=>c.n==='Volkswagen Golf')),
    future:eraCarAvailable(STUFF_CARS.find(c=>c.n==='Tesla Model 3')),oldSocial:socialV(['Social','Media'])};
  });
  assert.equal(details.year,1982);assert.ok(details.classic&&!details.future);
  assert.match(details.oldSocial,/have not launched/);
- assert.match(await p.locator('.hd').innerText(),/Age 12 · 1982/);
+ assert.match(await p.locator('.info').innerText(),/Age 12 · 1982/i);
  await p.getByRole('button',{name:'Stuff',exact:true}).click();
- await p.getByRole('button',{name:/^The Mall Cars/}).click();
+ await p.getByRole('button',{name:'The Mall',exact:true}).click();
  await p.getByRole('button',{name:'Technology store',exact:true}).click();
  assert.equal(await p.getByRole('button',{name:/Satellite-capable/}).count(),0);
  await p.getByRole('button',{name:/^Home personal computer/}).click();

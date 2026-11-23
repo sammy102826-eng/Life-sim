@@ -13,4 +13,5 @@ function assetRecordSettlement(kind,id,before,cashBefore){const after=g.loans.fi
 const assetOriginalIncident=stuffApplyIncident;
 stuffApplyIncident=function(a){if(!a)return;const debt=stuffFindLoan(a.id,a.kind),cash=g.cash;const result=assetOriginalIncident(a);if(['car-total','car-theft'].includes(a.action))assetRecordSettlement(a.kind,a.id,debt,cash);return result;};
 const assetOriginalTop=stuffTop;
-stuffTop=function(){const html=assetOriginalTop(),latest=g.assetSettlements?.at(-1);return html+(latest?`<div class=card><h3>Latest insurance settlement</h3><p>Age ${latest.age} · Paid to lenders ${loc(latest.debtPaid)} · Cash received ${loc(latest.cashReceived)} · Remaining loan ${loc(latest.remainingDebt)}</p></div>`:'');};
+function stuffSettlementSummary(){const latest=g.assetSettlements?.at(-1);return latest?`<div class=card><h3>Latest insurance settlement</h3><p>Age ${latest.age} · Paid to lenders ${loc(latest.debtPaid)} · Cash received ${loc(latest.cashReceived)} · Remaining loan ${loc(latest.remainingDebt)}</p></div>`:'';}
+stuffTop=function(){return assetOriginalTop()+stuffSettlementSummary();};

@@ -245,9 +245,12 @@ test('campus and coworker bonds synchronize in both directions using explicit id
 test('shared memories and multi-year reconciliation persist through save/load',async t=>{
  const p=await setup(t);await born(p);const r=await run(p,`g.age=30;var friend={id:'history-friend',n:'QA Friend',t:'fri',role:'Friend',age:30,bond:80,alive:true,m:0};g.rel.push(friend);relationshipContinuity(friend.id,'conflict');relationshipContinuity(friend.id,'repair');var delayed=friend.continuity.status==='strained';g.age++;relationshipContinuity(friend.id,'repair');g.age++;relationshipContinuity(friend.id,'followup');var saved=save(0,'life');loadFrom(0);friend=g.rel.find(x=>x.id==='history-friend');sel=friend.id;({delayed,saved,status:friend.continuity.status,memories:friend.sharedMemories.length,visible:relationshipView().includes('Shared history')})`);assert.deepEqual(r,{delayed:true,saved:true,status:'steady',memories:3,visible:true});
 });
-test('Other action search navigates safely and keeps typed text out of markup',async t=>{
- const p=await setup(t);await born(p);await run(p,"g.event=null;g.result=null;g.msq=[];tab='Other';NV.O=[];draw()");await p.getByLabel('Search actions').fill('family planning');await p.getByRole('button',{name:/Health · Family Planning/}).click();assert.match(await p.locator('.info').innerText(),/Family planning/);
- await run(p,"NV.O=[];draw()");await p.getByLabel('Search actions').fill('<img src=x onerror=alert(1)>');assert.equal(await p.locator('#other-search-results img').count(),0);assert.match(await p.locator('#other-search-results').innerText(),/0 results/);
+test('family planning remains accessible directly through the simplified Health menu',async t=>{
+ const p=await setup(t);await born(p);await run(p,"g.event=null;g.result=null;g.msq=[];mainTabOpen('Other')");
+ assert.equal(await p.getByLabel('Search actions').count(),0);
+ await p.getByRole('button',{name:/^Health Body/}).click();
+ await p.getByRole('button',{name:'Family Planning',exact:true}).click();
+ assert.match(await p.locator('.info').innerText(),/Family planning/);
 });
 test('unified finance totals include retirement once and dashboard viewing preserves balances',async t=>{
  const p=await setup(t);await born(p);const r=await run(p,`g.cash=10000;g.bank.chk=1000;g.bank.sav=2000;g.loans=[{n:'Personal loan',bal:500,rate:10}];g.sloan=1000;g.cc=null;jobUpdatePlan().balance=3000;var before={cash:g.cash,debt:g.sloan},base=financeOriginalNetWorth(),s=financeSnapshot(),html=financeDashboard();({liquid:s.liquid,debt:s.debt,retirement:s.retirement,net:s.netWorth,expected:base+3000,unchanged:g.cash===before.cash&&g.sloan===before.debt,visible:html.includes('Financial dashboard')})`);assert.equal(r.liquid,13000);assert.equal(r.debt,1500);assert.equal(r.retirement,3000);assert.equal(r.net,r.expected);assert.equal(r.unchanged,true);assert.equal(r.visible,true);
@@ -281,8 +284,21 @@ test('portraits cover player, relationships and school/work contacts and persist
  const p=await setup(t);await born(p);const r=await run(p,`g.age=20;g.event=null;g.result=null;g.msq=[];collegeCurrentFrom('Art College','university','Business','None');collegePage='classmates';tab='Work';wsel='college';draw();var peers=document.querySelectorAll('.info [data-art-kind=person]').length;var avatar=document.querySelectorAll('.hd .game-art--avatar').length;var person=g.rel[0],before=GameArt.svg('person',person);var saved=save(0,'life');loadFrom(0);var restored=GameArt.svg('person',g.rel[0])===before;tab='Rel';sel=null;relationshipOpen['Parents']=true;draw();var family=document.querySelectorAll('.relPerson .game-art').length;({peers,avatar,saved,restored,family,saveContainsSvg:localStorage.getItem('bt_slot_0').includes('<svg')})`);assert.ok(r.peers>=6);assert.equal(r.avatar,1);assert.equal(r.saved,true);assert.equal(r.restored,true);assert.ok(r.family>0);assert.equal(r.saveContainsSvg,false);
 });
 test('illustrated purchase, owned inventory and detail actions work offline on a narrow screen',async t=>{
- const p=await setup(t,{width:320,height:568});await born(p);await run(p,"g.age=30;g.cash=1000000;g.lic.push(DL);g.event=null;g.result=null;g.msq=[];g.hsPopup=null;tab='Stuff';stuffSelected=null;stuffShopTab='Cars';draw()");assert.equal(await p.locator('.info details[open] summary').count(),1);await p.context().setOffline(true);
- await p.getByRole('button',{name:'Purchase options',exact:true}).first().click();assert.equal(await p.locator('.game-art--hero[data-art-kind=car]').count(),1);await p.getByRole('button',{name:/^Buy with cash/}).click();await run(p,'g.msq=[];g.event=null;draw()');await p.locator('[onclick^="stuffOpenItem"]').first().click();assert.equal(await p.locator('.game-art--hero[data-art-kind=car]').count(),1);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ const p=await setup(t,{width:320,height:568});await born(p);
+ await run(p,"g.age=30;g.cash=1000000;g.lic.push(DL);g.event=null;g.result=null;g.msq=[];g.hsPopup=null;mainTabOpen('Stuff')");
+ await p.context().setOffline(true);
+ await p.getByRole('button',{name:'The Mall',exact:true}).click();
+ await p.getByRole('button',{name:/Used car/}).click();
+ await p.locator('.info details summary').first().click();
+ await p.getByRole('button',{name:'Purchase options',exact:true}).first().click();
+ assert.equal(await p.locator('.game-art--hero[data-art-kind=car]').count(),1);
+ await p.getByRole('button',{name:/^Buy with cash/}).click();
+ await run(p,"g.msq=[];g.event=null;g.result=null;mainTabOpen('Stuff')");
+ await p.getByRole('button',{name:'My stuff',exact:true}).click();
+ await p.getByRole('button',{name:/^Cars.*parking space/}).click();
+ await p.locator('[onclick^="stuffOpenItem"]').first().click();
+ assert.equal(await p.locator('.game-art--hero[data-art-kind=car]').count(),1);
+ assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 });
 test('exported illustration library contains valid standalone local SVG artwork',async t=>{
  const p=await setup(t);const icons=fs.readdirSync(path.join(root,'art/icons')).filter(x=>x.endsWith('.svg'));assert.equal(icons.length,191);const invalid=await p.evaluate(list=>{return list.flatMap(({name,svg})=>{const doc=new DOMParser().parseFromString(svg,'image/svg+xml');return doc.querySelector('parsererror')||doc.documentElement.localName!=='svg'||doc.querySelector('script,image,foreignObject')?[name]:[];});},icons.map(name=>({name,svg:fs.readFileSync(path.join(root,'art/icons',name),'utf8')})));assert.deepEqual(invalid,[]);
@@ -336,4 +352,74 @@ test('prenatal care is a recorded clinical appointment and recurring contracepti
 });
 test('child growth uses development context rather than adult BMI categories',async t=>{
  const p=await setup(t);await born(p);const r=await run(p,`g.age=6;g.bmi=16;var text=healthV();({context:text.includes('Childhood growth'),adultCategory:text.includes('Underweight')||text.includes('Healthy weight')})`);assert.equal(r.context,true);assert.equal(r.adultCategory,false);
+});
+test('the birth year follows the Life log and appearance choices reach the saved portrait',async t=>{
+ const p=await setup(t,{width:320,height:568});
+ await p.getByRole('button',{name:'Create your own life',exact:true}).click();
+ await p.getByLabel('Birth year').selectOption('1980');
+ await p.getByLabel('Eye color').selectOption('1');
+ await p.getByLabel('Hair color').selectOption('7');
+ await p.getByLabel('Skin tone').selectOption('3');
+ await p.getByLabel('Hair style').selectOption('5');
+ await p.getByRole('button',{name:'Be born',exact:true}).click();
+ assert.match(await p.locator('.mo').innerText(),/born in 1980/);
+ await p.getByRole('button',{name:'Begin your life',exact:true}).click();
+ assert.match(await p.locator('.info').innerText(),/Age 0 · 1980/i);
+ assert.doesNotMatch(await p.locator('.hd').innerText(),/1980/);
+ const portrait=p.locator('.game-art--avatar');
+ assert.match(await portrait.innerHTML(),/#267c7c/);
+ const saved=await run(p,`const appearance=g.appearance,talent=g.talent;
+  save(0,'life');loadFrom(0);g.event=null;g.result=null;g.msq=[];ageUp();
+  ({original:appearance,loaded:g.appearance,same:talent===g.talent,valid:Object.hasOwn(LIFE_TALENTS,talent)})`);
+ assert.deepEqual(saved.original,{eye:1,hair:7,skin:3,style:5});
+ assert.deepEqual(saved.loaded,saved.original);assert.ok(saved.same&&saved.valid);
+ assert.match(await p.locator('.info').innerText(),/Age 1 · 1981/i);
+});
+test('Work has a single education entry and the special-career back bubble stays within reach',async t=>{
+ const p=await setup(t,{width:320,height:568});await born(p);
+ await run(p,"g.age=24;g.msq=[];g.event=null;g.result=null;mainTabOpen('Work')");
+ assert.equal(await p.getByRole('button',{name:/^Education journey/}).count(),1);
+ await p.getByRole('button',{name:'Special careers',exact:true}).click();
+ assert.equal(await p.getByRole('heading',{name:'Special careers',exact:true}).count(),1);
+ assert.equal(await p.getByRole('button',{name:/^Education journey/}).count(),0);
+ const dock=p.locator('.info .back-dock');
+ await p.locator('.info').evaluate(panel=>{panel.scrollTop=panel.scrollHeight;});
+ const positions=await dock.evaluate(node=>({dock:node.getBoundingClientRect().top,panel:node.parentElement.getBoundingClientRect().top}));
+ assert.ok(Math.abs(positions.dock-positions.panel)<20);
+ await dock.getByRole('button').click();
+ await p.getByRole('button',{name:'Join the military',exact:true}).click();
+ assert.equal(await p.getByRole('button',{name:/^Enlist as a soldier/}).count(),1);
+ assert.equal(await p.getByRole('button',{name:/^Become an officer/}).count(),1);
+});
+test('the Journal keeps personal headlines and the public editions work without a player decision',async t=>{
+ const p=await setup(t);await born(p);
+ await run(p,`g.msq=[];g.event=null;g.result=null;newsBuildYear();
+  const edition=newsState().editions[0];
+  edition.articles.unshift({id:'private-test',kind:'family',title:'A private milestone',text:'A new family tradition.',action:null,player:true});
+  g.ms['dig']=g.age;draw()`);
+ await p.getByRole('button',{name:'Open newspaper',exact:true}).click();
+ assert.equal(await p.getByText('A private milestone',{exact:true}).count(),0);
+ for(const name of ['The Global Post','Nunya Beeswax','Crime','The Silly Goose']){
+  await p.getByRole('button',{name,exact:true}).click();
+  assert.ok(await p.locator('.newspaper article').count()>0);
+ }
+ await p.getByRole('button',{name:'Close newspaper',exact:true}).click();
+ await p.getByRole('button',{name:'Open journal',exact:true}).click();
+ assert.equal(await p.getByText('A private milestone',{exact:true}).count(),1);
+ await p.getByRole('button',{name:'Achievements and milestones',exact:true}).click();
+ assert.equal(await p.getByText('Field discovery',{exact:true}).count(),1);
+});
+test('returning from an investment detail restores the listing scroll position',async t=>{
+ const p=await setup(t,{width:320,height:568});await born(p);
+ await run(p,"g.age=25;g.msq=[];g.result=null;g.event=null;finOpen('companies')");
+ const panel=p.locator('.info');
+ const listing=panel.locator('article').last();
+ await listing.getByRole('button',{name:'View company'}).scrollIntoViewIfNeeded();
+ const before=await panel.evaluate(node=>node.scrollTop);
+ assert.ok(before>200);
+ const name=await listing.locator('h4').textContent();
+ await listing.getByRole('button',{name:'View company'}).click();
+ assert.equal(await panel.getByRole('heading',{name,exact:true}).count(),1);
+ await panel.getByRole('button',{name:'Back to company directory',exact:true}).click();
+ await p.waitForFunction(offset=>Math.abs(document.querySelector('.info').scrollTop-offset)<25,before);
 });

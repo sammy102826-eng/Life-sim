@@ -65,6 +65,7 @@ test('Pages deployment supports desktop and mobile gameplay with graphics and na
     assert.equal(await page.locator('.hd .game-art--avatar svg').count(),1);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,JSON.stringify(viewport));
     await page.getByRole('button',{name:'Stuff',exact:true}).click();
+    await page.getByRole('button',{name:'The Mall',exact:true}).click();
     assert.ok(await page.locator('.info [data-art-kind=car] svg').count()>0);
   }
 });
@@ -158,13 +159,16 @@ test('an existing installation can replace its stale cache and find the new cont
   await startLife(updater);
   await updater.getByRole('button',{name:'Work',exact:true}).click();
   await updater.getByRole('button',{name:'Find a full-time job',exact:true}).click();
-  const military=updater.getByRole('heading',{name:'Military service'});
-  await military.waitFor();
-  assert.equal(await military.locator('..').getByRole('button',{name:/^Soldier /}).count(),1);
-  assert.equal(await military.locator('..').getByRole('button',{name:/^Military officer /}).count(),1);
+  assert.equal(await updater.getByRole('heading',{name:'Military service'}).count(),0);
+  await updater.locator('.info .back-dock').getByRole('button').click();
+  await updater.getByRole('button',{name:'Join the military',exact:true}).click();
+  await updater.getByRole('heading',{name:'Join the military'}).waitFor();
+  assert.equal(await updater.getByRole('button',{name:/^Enlist as a soldier/}).count(),1);
+  assert.equal(await updater.getByRole('button',{name:/^Become an officer/}).count(),1);
   await updater.getByRole('button',{name:'Open newspaper',exact:true}).click();
-  await updater.getByRole('button',{name:'Investigations',exact:true}).click();
-  await updater.getByRole('heading',{name:'Private investigation desk'}).waitFor();
+  await updater.getByRole('button',{name:'Crime',exact:true}).click();
+  await updater.getByRole('heading',{name:'Crime',exact:true}).waitFor();
+  assert.match(await updater.locator('.newspaper article').first().innerText(),/property-crime index/);
 
   // A subsequent update waits while the game is open and can be installed on demand.
   await updater.evaluate(()=>{newsPopupOpen=false;if(!save(0,'life'))throw Error('Save failed');go('title');});

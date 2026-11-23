@@ -284,7 +284,7 @@ function genContinue(id){
  next.cit=[next.birth,next.country].filter((v,i,a)=>a.indexOf(v)===i);
  if(next.age>=18)next.bank.id=old.bank.id??0;
  next.msInit=1;
- g=next;
+ g=next;naturalTalent(g);
  const items=[...genClone(own.assets),...genClone(own.legacy),...(bundle?.items||[])];
  genApplyProperty(next,items,old.financial);
  for(const item of items)genRebaseAsset(next,item,next.age,item.originAge??old.age);

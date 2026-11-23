@@ -43,7 +43,7 @@ workV=function(){const box=document.createElement('div');box.innerHTML=artWorkVi
  return box.innerHTML;
 };
 const artGameView=gameView;
-gameView=function(){const box=document.createElement('div');box.innerHTML=artGameView();const name=box.querySelector('.hd .row > .t');if(name){name.classList.add('player-name');name.insertAdjacentHTML('afterbegin',GameArt.svg('person',{id:'player:'+g.name,n:g.name,age:g.age},'avatar'));}return box.innerHTML;};
+gameView=function(){const box=document.createElement('div');box.innerHTML=artGameView();const name=box.querySelector('.hd .row > .t');if(name){name.classList.add('player-name');name.insertAdjacentHTML('afterbegin',GameArt.svg('person',{id:'player:'+g.name,n:g.name,age:g.age,appearance:g.appearance},'avatar'));}return box.innerHTML;};
 const artOtherView=otherV;
 otherV=function(){const box=document.createElement('div');box.innerHTML=artOtherView();if(!NV.O.length){for(const b of box.querySelectorAll('button[onclick]')){const m=b.getAttribute('onclick').match(/nv\('O','([^']+)'\)/);const dashboard=b.textContent==='Financial dashboard';if(m||dashboard){b.classList.add('illustrated-button');b.insertAdjacentHTML('afterbegin',GameArt.svg(m?m[1].toLowerCase():'money',{n:m?m[1]:'Financial dashboard'},'mini'));}}}return box.innerHTML;};
 const artStuffOverview=stuffTop;

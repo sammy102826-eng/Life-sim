@@ -188,7 +188,7 @@ function studioPhaseChoice(s,p,choice){
   let cast=0;
   if(p.stage==='filming')cast=Math.round(p.slots.reduce((n,slot)=>n+(studioFind(s.people,slot.person)?.skill||42),0)/Math.max(1,p.slots.length)/9)-5;
   const change=expected+boost+cast+studioRandom(s,-5,4);
-  p.quality=studioClamp(p.quality+change);
+  p.quality=p.stage==='writing'?learnTalent('writing',p.quality,change):studioClamp(p.quality+change);
   p.ready=true;
   studioLogProject(p,label+'. The stage review is complete.');
   return label+'. Project quality '+p.quality+'/100. This stage advances at the next Age Up unless a production issue holds it.';

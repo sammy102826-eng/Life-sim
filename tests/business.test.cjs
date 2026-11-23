@@ -123,9 +123,9 @@ test('newspaper shows independent sections, rumors and persistent company decisi
   return open.article;
  });
  await p.getByRole('button',{name:'Open newspaper',exact:true}).click();
- await p.getByRole('button',{name:'International',exact:true}).click();
+ await p.getByRole('button',{name:'The Global Post',exact:true}).click();
  assert.ok(await p.getByText('World economy', {exact:false}).isVisible());
- await p.locator('.newspaper').getByRole('button',{name:'Business',exact:true}).click();
+ await p.locator('.newspaper').getByRole('button',{name:'Nunya Beeswax',exact:true}).click();
  await p.getByText('Rumor · Unconfirmed', {exact:false}).waitFor();
  const story=p.locator('.newspaper article').filter({hasText:'Workers request a formal pay agreement'});
  await story.getByRole('button',{name:'Read & respond'}).click();

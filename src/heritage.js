@@ -81,7 +81,7 @@ function heritageLab(item,step){
  if(!heritageAtSite(s)||item?.place!=='lab'||item.site!==site.id)return 'This find is unavailable in your current field lab.';
  if(step==='map'){
   if(item.mapped)return 'The stratigraphic record is complete.';
-  item.mapped=true;career.analysis=heritageNum(career.analysis+3);
+  item.mapped=true;career.analysis=learnTalent('science',career.analysis,3);
   heritageLog(s,'You recorded the layer boundaries and features associated with '+item.name.toLowerCase()+'.');
   return '';
  }
@@ -94,7 +94,7 @@ function heritageLab(item,step){
  item.value=Math.round(item.value*(1+.25+item.layer*.2));
  const discovery=career.discoveries===0||item.layer>0&&ch(58);
  item.significant=discovery;
- career.analysis=heritageNum(career.analysis+6);
+ career.analysis=learnTalent('science',career.analysis,6);
  career.reputation=heritageNum(career.reputation+(discovery?13:4));
  if(discovery){
   career.discoveries++;
@@ -220,7 +220,7 @@ function heritageRespond(s,e,index){
  profile.reputation=heritageNum(profile.reputation+rep);
  if(action==='survey')site.survey=heritageNum(site.survey+8);
  if(action==='pause')site.paused=g.age+1;
- if(action==='research')s.career.analysis=heritageNum(s.career.analysis+10);
+ if(action==='research')s.career.analysis=learnTalent('science',s.career.analysis,10);
  if(action==='deposit'){
   const item=s.artifacts.find(x=>x.site===site.id&&x.place==='lab');
   if(item)item.place='donated';

@@ -1,6 +1,7 @@
-const FINANCE_PAGES={overview:'Overview',market:'Investments',companies:'Companies',lottery:'Lottery',banking:'Banking',credit:'Credit cards',loans:'Loans',retirement:'Retirement',taxes:'Taxes'};
+const FINANCE_PAGES={overview:'Overview',market:'Investments',companies:'Companies',lottery:'Lottery',banking:'Banking',credit:'Credit cards',loans:'Loans',insurance:'Insurance',giving:'Giving',retirement:'Retirement',taxes:'Taxes'};
 const FINANCE_MARKETS={stock:'Stocks',bond:'Bonds',fund:'Mutual funds',crypto:'Crypto',penny:'Penny stocks'};
-let finPage='overview',finMarketKind='stock',finSelected=null;
+let finPage='overview',finMarketKind='stock',finSelected=null,finListOwner=null;
+const finListScroll={};
 const finSection=(title,body)=>`<section class="law-section"><h3>${uiEscape(title)}</h3>${body}</section>`;
 const finLabel=(title,value)=>`<div class="row"><span>${uiEscape(title)}</span><b>${value}</b></div>`;
 const finButton=(label,action,id='')=>B(label,`finAction('${action}','${id}')`);
@@ -15,11 +16,29 @@ function finOpen(page='overview',selected=null){
  if(g.jail||!Object.hasOwn(FINANCE_PAGES,page))return;
  const s=finState();s.enabled=true;
  if(['market','companies'].includes(page))finSyncCompanies(s.companies.length?s:finInitMarket(s));
- finPage=page;finSelected=selected;tab='Other';NV.O=['Finance'];draw(1);
+ if(finListOwner!==g){
+  finListOwner=g;
+  for(const key of Object.keys(finListScroll))delete finListScroll[key];
+ }
+ const panel=document.querySelector('.info'),same=tab==='Other'&&NV.O[0]==='Finance'&&finPage===page;
+ const key=page==='market'?finMarketKind:page;
+ const returnToList=same&&!selected&&!!finSelected;
+ if(same&&selected&&!finSelected)finListScroll[key]=panel?.scrollTop||0;
+ finPage=page;finSelected=selected;tab='Other';NV.O=['Finance'];draw(!same&&!selected);
+ if(selected||returnToList)requestAnimationFrame(()=>{
+  const current=document.querySelector('.info');
+  if(!current||finPage!==page||finSelected!==selected)return;
+  if(returnToList){current.scrollTop=finListScroll[key]||0;return;}
+  const detail=current.querySelector('.law-shell > .law-section');
+  if(!detail)return;
+  current.scrollTop+=detail.getBoundingClientRect().top-current.getBoundingClientRect().top-
+   Math.max(50,(current.clientHeight-detail.offsetHeight)/2);
+ });
 }
 function finMarketOpen(kind){
  if(!Object.hasOwn(FINANCE_MARKETS,kind))return;
- finMarketKind=kind;finOpen('market');
+ if(finMarketKind!==kind){finSelected=null;finMarketKind=kind;finOpen('market');requestAnimationFrame(()=>document.querySelector('.info')?.scrollTo(0,0));return;}
+ finOpen('market');
 }
 function finMessage(text){if(text)toast(text);}
 function finOpenTax(age){
@@ -91,7 +110,7 @@ function finDeferEvent(){
 }
 function finCenter(page=finPage){
  const s=finState(),views={overview:finOverview,market:finMarketView,companies:finCompanyView,lottery:finLotteryView,banking:finBankView,
-  credit:finCreditView,loans:finLoanView,retirement:finRetirementView,taxes:finTaxView};
+  credit:finCreditView,loans:finLoanView,insurance:()=>moneyV('Insurance'),giving:()=>moneyV('Giving'),retirement:finRetirementView,taxes:finTaxView};
  return `<div class="law-shell finance-shell"><h2>Financial center</h2>${B('Back to Other',"NV.O=[];draw(1)")}
   <nav class="law-nav" aria-label="Financial sections">${Object.entries(FINANCE_PAGES).map(([key,title])=>`<button type="button" aria-pressed="${key===page}" onclick="finOpen('${key}')">${title}</button>`).join('')}</nav>
   <h2>${FINANCE_PAGES[page]}</h2>${views[page](s)}</div>`;
@@ -99,12 +118,12 @@ function finCenter(page=finPage){
 function finOverview(s){
  const latest=s.returns.at(-1);
  return '<div class="law-metrics">'+lawMetric('Personal cash',loc(g.cash))+lawMetric('Checking and savings',loc(g.bank.chk+g.bank.sav+s.high))+
-  lawMetric('Net worth',loc(nw()))+lawMetric('Credit score',g.cred)+'</div>'+
+  lawMetric('Net worth',loc(nw()))+lawMetric('Credit score',g.cred)+'</div>'+B('Financial dashboard',"NV.O=['Dashboard'];draw(1)")+
   (latest&&!latest.filing?finSection('Tax return ready',B('Review and file',`finOpenTax(${latest.age})`)):'')+
   (s.event?finSection('Financial decision',B('Review financial event','finReviewEvent()')):'')+
-  (s.collection?finSection('Collections',B('Review collection options',"g.financial.modal={kind:'collection'};draw()")):'')+
+
   (s.notices.length?finSection('Notices',s.notices.map(n=>`<p><strong>${uiEscape(n.title)}</strong> · ${uiEscape(n.text)}</p>`).join('')+
-    B('Review next notice',"g.financial.modal={kind:'notice'};draw()")):'');
+    B('Review next notice',"g.financial.modal={kind:'notice'};draw()")):'')+finSection('Economy',moneyV('Overview'));
 }
 function finMarketView(s){
  finInitMarket(s);
@@ -195,7 +214,10 @@ function finLoanView(s){
   return finSection(v.n+' business loan',finLabel('Issuer',uiEscape(finBankName(d.lender)))+finLabel('Principal',loc(d.bal))+
    '<p>Company funds pay the annual installment and extra principal.</p>'+payment('company-'+v.marketId,d.bal));
  }).join('');
- return finSection('Borrowing offers',finLabel('Credit score',g.cred)+
+ return (s.collection?finSection('Collections',B('Review collection options',"g.financial.modal={kind:'collection'};draw()")):'')+
+ (s.arrears?finSection('Tax arrears',finLabel('Outstanding balance',loc(s.arrears))+'<p>Unpaid tax is collected from future paychecks.</p>'):'')+
+ (g.cc?.bal?finSection('Credit card debt',finLabel('Outstanding balance',loc(g.cc.bal))+B('Manage card payments',"finOpen('credit')")):'')+
+ finSection('Borrowing offers',finLabel('Credit score',g.cred)+
   finLabel('Personal borrowing limit',a.eligible?loc(a.limit)+' · '+a.rate+'% APR':'Unavailable')+
   finLabel('Business borrowing limit',b.eligible?loc(b.limit)+' · '+b.rate+'% APR':'Unavailable')+
   finSelect('fin-loan-kind','Purpose',[['personal','Personal'],['business','Business']])+finSelect('fin-loan-term','Annual term',[[3,'3 years'],[5,'5 years'],[8,'8 years'],[10,'10 years']])+
@@ -213,18 +235,18 @@ function finRetirementView(s){
   finSelect('fin-retire-type','Account',[['traditional','Traditional IRA'],['roth','Roth IRA']])+
   finSelect('fin-retire-action','Transaction',[['deposit','Contribute'],['withdraw','Withdraw']])+
   finInput('fin-retire-amount','Amount in selected currency',1000)+B('Submit retirement transaction',"finAction('retirement','')",g.age<18))+
-  B('Review employer and government retirement',"tab='Other';NV.O=['Money','Retirement'];draw(1)");
+  finSection('Employer and government retirement',retV());
 }
 function finTaxView(s){
  const latest=finTaxProfile();
  return finSection('Country tax schedule',`<p>${uiEscape(g.country)} · Simulated progressive income tax. Standard exemption ${loc(pr(latest.allow))}.</p>`+
   [['Vehicles',latest.car],['Home transfer',latest.home],['Jewelry',latest.jewelry],['Other purchases',latest.other],
    ['Capital gains',latest.gains],['Lottery winnings',latest.lottery],['Estate tax above '+loc(pr(latest.estateFree)),latest.estate]]
-  .map(([title,value])=>finLabel(title,value+'%')).join('')+finLabel('Deferred tax balance',loc(s.arrears)))+
+  .map(([title,value])=>finLabel(title,value+'%')).join(''))+
   finSection('Tax returns',s.returns.slice().reverse().map(r=>`<article class="law-item"><div><h4>Age ${r.age} · ${uiEscape(r.country)}</h4>
    <p>${r.filing?(r.filing.refund?'Refund '+loc(r.filing.refund):'Filed · Tax assessed '+loc(r.filing.total)):'Ready to file'}.</p></div>
    ${B(r.filing?'View return':'Review and file',`finOpenTax(${r.age})`)}</article>`).join('')||'<p>The first adult return is prepared at Age Up.</p>')+
-  (s.estate.length?finSection('Estate distributions',s.estate.slice().reverse().map(r=>`<p>${uiEscape(r.name)} · ${r.heirs} heirs · Your share ${loc(r.share)} · Estate tax ${loc(r.tax)}.</p>`).join('')):'');
+  finSection('Tax planning',moneyV('Taxes'))+(s.estate.length?finSection('Estate distributions',s.estate.slice().reverse().map(r=>`<p>${uiEscape(r.name)} · ${r.heirs} heirs · Your share ${loc(r.share)} · Estate tax ${loc(r.tax)}.</p>`).join('')):'');
 }
 function finTaxModal(report,s){
  const filed=report.filing,estimate=filed||finTaxPreview(report);

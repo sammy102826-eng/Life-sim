@@ -162,7 +162,7 @@ function piCaseAction(id,action){
  if(!piSpend(a,'Investigation expenses',cost))return 'The agency cannot fund that work.';
  const staff=Object.keys(PI_STAFF).find(k=>PI_STAFF[k][3]===action);
  const difficulty=PI_CASES[item.key][1]/9,bonus=(a.staff[staff]||0)*3+a.secure;
- const gain=Math.max(3,Math.round(quality+R(0,11)+bonus+s.training/2-difficulty));
+ const gain=Math.max(3,Math.round(quality+(g.talent==='investigation'?Math.round(quality*.2):0)+R(0,11)+bonus+s.training/2-difficulty));
  item.used[action]=(item.used[action]||0)+1;item.cost+=cost;
  item.confidence=piScore(item.confidence+gain);
  item.trust=piScore(item.trust+(action==='interview'?5:2));

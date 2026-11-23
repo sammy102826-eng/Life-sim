@@ -87,6 +87,7 @@ const MALL_DEPARTMENTS={used:'Used car lot',new:'New car showroom',luxury:'Luxur
  Jewelry:'Jewelry and collectibles',Vehicles:'Boats and aircraft',Pets:'Pet adoption centre',Property:'Property office',Licenses:'Licenses and permits',Investments:'Investment desk'};
 function eraMallDepartment(key){
  if(!g.alive||g.jail||!Object.hasOwn(MALL_DEPARTMENTS,key))return;
+ if(key==='land')return genPropertyOpen('index');
  NV.S=['Mall',key];stuffSelected=null;stuffPurchaseOffer=null;draw(1);
 }
 function eraTechBuy(index){

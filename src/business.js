@@ -324,7 +324,7 @@ function bizOffer(v,kind){
 function bizResearchYear(v){
  const s=v.biz,def=bizIndustry(v);
  if(!s.research||s.cash<0)return;
- s.progress+=Math.min(82,Math.round(s.research/Math.max(1,pr(650))+bizSkill()/4));
+ s.progress+=Math.min(82,Math.round(s.research/Math.max(1,pr(650))+bizSkill()*talentFactor('business')/4));
  if(s.progress<100||s.patents.length>=24)return;
  s.progress-=100;
  const base=def.patents[s.patents.length%def.patents.length];

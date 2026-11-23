@@ -34,10 +34,10 @@ function musicPractice(key,lesson){
  if(lesson?p.lessons>=1:p.sessions>=2)return 'You already used those practice blocks for this year.';
  const fee=lesson&&g.age>=14?pr(MUSIC_ROLES[key][1]):0;
  if(g.cash<fee)return 'You need '+loc(fee)+' for that lesson.';
- if(musicSkill(s,key)>=100)return 'You already mastered this skill.';
+ if(musicSkill(s,key)>=talentCap('music'))return 'You reached your current practice limit for this skill.';
  if(fee){g.cash-=fee;LD('Music instruction',-fee);}
  p[lesson?'lessons':'sessions']++;
- const next=musicNum(musicSkill(s,key)+(lesson?9:4)+Math.floor(g.smarts/38));
+ const next=learnTalent('music',musicSkill(s,key),(lesson?9:4)+Math.floor(g.smarts/38));
  if(key==='voice')g.les.music=next;
  else s.instruments[key]=next;
  musicLog(s,MUSIC_ROLES[key][0]+' reached '+next+'/100.');

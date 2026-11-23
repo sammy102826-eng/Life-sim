@@ -150,7 +150,7 @@ The court and prison systems use fictional sentencing bands. Run the focused che
 
 ## Financial center, markets and tax filing
 
-Select your cash balance in the upper-right corner to open the **Financial center**. Investments includes public stocks, bonds, mutual funds, crypto and penny stocks. The company directory uses the same listings as business ownership. An IPO opens the company to trading, research changes its outlook and quote, and a split preserves the value of existing positions. The newspaper’s **Business** section covers financial developments and supports company watchlists and related decisions.
+Select your cash balance in the upper-right corner to open the **Financial center**. Investments includes public stocks, bonds, mutual funds, crypto and penny stocks. The company directory uses the same listings as business ownership. An IPO opens the company to trading, research changes its outlook and quote, and a split preserves the value of existing positions. The newspaper’s **Nunya Beeswax** section covers financial developments and supports company watchlists and related decisions.
 
 Youth savings earns a higher rate before rolling into adult savings at 18. Adult banking supports checking, savings, high-yield accounts at participating banks, and traditional and Roth retirement accounts. Credit cards can cover a cash shortfall up to their available limit. Choose full-balance or minimum autopay and review annual interest, overdue amounts and cashback. **Loans** shows scheduled and extra repayments, including linked asset loans, student debt and practice or firm debt. Collection options include surrendering assets or restructuring while protecting the primary home and car.
 
@@ -216,7 +216,7 @@ Choose a birth year when starting a life. The calendar appears next to your age 
 
 Open **Work → Special careers → Archaeologist** to see available field programs. Survey and excavate in layers, then record stratigraphy and run a suitable lab test. After three field years, a documented discovery, and reputation of 42, you can buy an independent excavation permit. Protected finds go to a public collection. Eligible finds can go into your inventory or museum, be donated, or be sold through a licensed dealer.
 
-Open a museum from **Stuff**. Manage admissions, school visits, conservation, dealer transactions, gallery space, and staff against a separate budget. Find your owned pieces under **Personal artifact inventory**. Open a residence or owned property and choose **Customize home** to display objects, select an interior style, or add parking. Cars already owned stay in overflow when you lose parking capacity, and you need a free space for the next purchase. Displayed items may be stolen in a break-in.
+Open a museum from **Other → Museum**. Manage admissions, school visits, conservation, dealer transactions, gallery space, and staff against a separate budget. Find your owned pieces under **Stuff → My stuff → Personal artifacts**. Open a residence or owned property and choose **Customize home** to display objects, select an interior style, or add parking. Cars already owned stay in overflow when you lose parking capacity, and you need a free space for the next purchase. Displayed items may be stolen in a break-in.
 
 The Newspaper carries discoveries, museum openings, public decisions, and technology launches. Decision buttons appear when you meet the relevant requirements.
 
@@ -230,8 +230,14 @@ Choose **Open your own Casino** to start a house game and grow it into a lounge,
 
 ### Private investigations and military careers
 
-Become a police officer, take two supervised casework courses, and complete three patrol years before applying for detective. Three years in the detective division unlock **Work → Special careers → Private Investigator**. An agency can accept referrals, build evidence across sources, issue documented reports, and hire staff. Reputation brings more complex assignments and direct client requests. Public agency decisions appear in the Newspaper. Private client decisions stay with the agency.
+Become a police officer, take two supervised casework courses, and complete three patrol years before applying for detective. Three years in the detective division unlock **Work → Special careers → Private Investigator**. An agency can accept referrals, build evidence across sources, issue documented reports, and hire staff. Reputation brings more complex assignments and direct client requests. Agency decisions and archived coverage live under **Work → Private Investigator**. The newspaper’s **Crime** section covers public investigations and simulated crime trends.
 
-**Work → Find a full-time job** lists Soldier and Military officer. Soldiers keep the four-year enlistment and earn the tuition benefit after the final year of service.
+**Work → Join the military** offers enlistment and officer applications. Soldiers keep the four-year enlistment and earn the tuition benefit after the final year of service.
 
 Personal distributions from businesses, studios, law firms, medical practices, museums, casinos, private universities, and investigation agencies use the character’s country income-tax rate as withholding. The annual tax return credits withheld amounts. The UAE starts with no personal income or payroll tax in the game. Business taxes and purchase taxes are separate.
+
+### Life log, Journal, and shopping
+
+The Life log shows the calendar year for each birthday. Open the **Journal** beside the newspaper to read personal news and review achievements. The newspaper includes the character’s country edition, **The Global Post**, **Nunya Beeswax**, **Crime**, and **The Silly Goose**.
+
+In **Stuff**, start with Housing, shop by department at **The Mall**, or manage belongings under **My stuff**. The Mall opens new models as the calendar advances. Vehicle purchases require available parking. **Other → Appearance** lets you change hairstyles and hair color after birth. The character editor in Settings can adjust stats, birth year, sports skills, and natural aptitude for testing.

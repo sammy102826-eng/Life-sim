@@ -88,7 +88,7 @@ function heritageWorkView(){
  return '<div class="law-shell">'+back+head+actions+'</div>';
 }
 function heritageMuseumView(){
- const back=B('Back to Stuff',"mainTabOpen('Stuff')"),s=heritageState(),m=s.museum;
+ const back=B('Back to Other',"mainTabOpen('Other')"),s=heritageState(),m=s.museum;
  if(!m)return back+studioSection('Open your own museum','<p>Opening costs '+loc(pr(76000))+
   ' and includes a main gallery with eight display spaces and an operating reserve.</p><label for="museum-name">Museum name</label>'+
   '<input id="museum-name" class="txt" maxlength="52">'+heritageButton('Open museum','museum','','',!heritageAdult()));
@@ -115,7 +115,7 @@ function heritageMuseumView(){
   studioSelect('museum-dealer','Licensed dealer inventory',Object.entries(DIG_FINDS).map(([k,[name,,base]])=>[k,name+' · '+loc(pr(base*1.4))]))+
   heritageButton('Buy selected artifact','buy','','',museumItems(s).length>=museumSlots(m))+
   museumItems(s).map(a=>heritageArtifactView(a,'museum')).join('')+
-  B('Personal artifact inventory',"heritageStuff('Artifacts')")+'</details></div>';
+  B('Personal artifacts',"cleanupRoute('Stuff',['Owned','artifact'])")+'</details></div>';
 }
 function heritageHomeView(){
  const h=stuffAsset('home',heritageSelected);

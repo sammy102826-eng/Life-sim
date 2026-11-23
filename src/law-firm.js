@@ -335,7 +335,7 @@ function lawDecision(f,c,choice,stage) {
   c.confidence=lawClamp(c.confidence+[5,2,-2][choice]+Math.round(push/2));
   client.satisfaction=lawClamp(client.satisfaction+[3,2,-2][choice]+Math.sign(push)*2);
   client.trust=lawClamp(client.trust+Math.sign(push)*2);
-  lawChange(f,'skill',stage==='prepare'||courtroom?1:0);
+  if(stage==='prepare'||courtroom)f.skill=learnTalent('law',f.skill,1);
   let response=push>=2
     ? c.opposingCounsel+' narrowed the challenge to part of the record.'
     : c.opposingCounsel+' disputed your account and secured time to respond.';

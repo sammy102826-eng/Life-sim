@@ -183,8 +183,8 @@ function teachProjectAction(id,mode){
  if(p.used[mode]===g.age)return 'This project action has already been used this year.';
  p.used[mode]=g.age;
  if(mode==='work')p.progress=Math.min(100,p.progress+23);
- if(mode==='review'){p.quality=teachBound(p.quality+9);p.progress=Math.min(100,p.progress+8);}
- if(mode==='partner'){p.quality=teachBound(p.quality+5);p.progress=Math.min(100,p.progress+13);s.popularity=teachBound(s.popularity+2);}
+ if(mode==='review'){p.quality=learnTalent('teaching',p.quality,9);p.progress=Math.min(100,p.progress+8);}
+ if(mode==='partner'){p.quality=learnTalent('teaching',p.quality,5);p.progress=Math.min(100,p.progress+13);s.popularity=teachBound(s.popularity+2);}
  return '';
 }
 function teachClassYear(s){

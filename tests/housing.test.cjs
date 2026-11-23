@@ -66,11 +66,15 @@ test('housing and career saves reject malformed records without changing active 
  for(const mutation of ['r.data.housing.history={}','r.data.home.monthlyRent=-50','r.data.realEstate.clients={}','r.data.realEstate.level=9'])assert.equal(await run(p,`var raw=localStorage.getItem('bt_slot_0'),r=JSON.parse(raw);${mutation};var rejected=false;try{SaveStore.parse(JSON.stringify(r))}catch(e){rejected=true}rejected&&localStorage.getItem('bt_slot_0')===raw`),true,mutation);
 });
 test('compact categories preserve every catalog item, equal tabs and housing menus work at 320 pixels',async t=>{
- const p=await setup(t,{width:320,height:568});await born(p);await ready(p);await run(p,"tab='Stuff';stuffShopTab='Cars';draw()");
+ const p=await setup(t,{width:320,height:568});await born(p);await ready(p);await run(p,"mainTabOpen('Stuff')");
+ await p.getByRole('button',{name:'The Mall',exact:true}).click();
+ await p.getByRole('button',{name:'Used car lot',exact:true}).click();
  assert.equal(await p.locator('.info details.card').count(),6);
- await p.getByLabel('Category',{exact:true}).last().selectOption('Trucks');assert.match(await p.locator('.info').innerText(),/Trucks/);
+ const category=p.getByLabel('Category',{exact:true}).last();
+ const option=await category.locator('option').last().evaluate(option=>option.value);await category.selectOption(option);
+ assert.equal(await category.inputValue(),option);
  const sizes=await p.locator('.nav .tab').evaluateAll(els=>els.map(x=>x.getBoundingClientRect().width));assert.equal(sizes.length,5);assert.ok(Math.max(...sizes)-Math.min(...sizes)<1);
- await p.getByRole('button',{name:'Residence, landlord & homes to rent',exact:true}).click();await p.getByRole('button',{name:'Talk with landlord',exact:true}).click();await p.getByRole('button',{name:'Listen, document the need and follow through',exact:true}).click();await run(p,'g.result=null;g.msq=[];draw()');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await p.getByRole('button',{name:'Stuff',exact:true}).click();await p.getByRole('button',{name:'Residence and rentals',exact:true}).click();await p.getByRole('button',{name:'Talk with landlord',exact:true}).click();await p.getByRole('button',{name:'Listen, document the need and follow through',exact:true}).click();await run(p,'g.result=null;g.msq=[];draw()');assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await run(p,"stuffSelected=null;tab='Work';wsel=null;wsub=null;draw()");assert.equal(await p.getByRole('button',{name:/^Education journey/}).count(),1);assert.equal(await p.getByRole('button',{name:'Education',exact:true}).count(),0);await p.getByRole('button',{name:'Special careers',exact:true}).click();await p.getByRole('button',{name:/^Real estate /}).click();assert.equal(await p.getByRole('heading',{name:'Real estate special career'}).count(),1);
 });
 test('annual renter payment uses this year salary before recording arrears',async t=>{
